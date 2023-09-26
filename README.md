@@ -17,26 +17,28 @@ cd csi3335-project-venv
 ```
 
 2. **Create a Virtual Environment**
-** For Windows **
+
+**For Windows**
 ```bash
 python -m venv project_env
 ```
-** For Linux/MacOs **
+**For Linux/MacOs**
 ```bash
 python3 -m venv project_env
 
 ```
-3. ** Activate the Virtual Environment **
-** For Windows **
+3. **Activate the Virtual Environment**
+
+**For Windows**
 ```bash
 .\project_env\Scripts\activate
 ```
-** For Linux/MacOs **
+**For Linux/MacOs**
 ```bash
 source project_env/bin/activate
 ```
 
-4. ** Install the dependencies **
+4. **Install the dependencies**
 ```bash
 pip install -r requirements.txt
 ```
