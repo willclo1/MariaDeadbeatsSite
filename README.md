@@ -1,6 +1,6 @@
 # CSI3335 Project Virtual Environment
 
-This repository provides a virtual environment setup with specified dependencies for student projects in the CSI3335 course.
+This repository provides a virtual environment setup with specified dependencies for student projects in the CSI3335 course. **Please use Python 3.10 and above**
 
 ## Description
 
