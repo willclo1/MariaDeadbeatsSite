@@ -12,7 +12,7 @@ This virtual environment contains essential Python libraries and frameworks requ
 1. **Clone the Repository**:
 
 ```bash
-git clone https://github.com/sanjelarun/csi3335-project-venv.git
+git clone https://github.com/willclo1/MariaDeadbeatsSite.git
 cd csi3335-project-venv
 ```
 
