@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
 
 app = Flask(__name__)
+app.secret_key = "your_secret_key"  # Required for session management
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -14,42 +15,53 @@ def home():
     session = Session()
 
     # Fetch all teams
-    teamSQL = text("SELECT DISTINCT team_name FROM teams order by yearID desc;")
+    teamSQL = text("SELECT DISTINCT team_name FROM teams ORDER BY yearID DESC;")
     teamResult = session.execute(teamSQL)
     tmOptions = [row[0] for row in teamResult]
 
-    # Initialize variables
     selected_team = None
-    yrOptions = []
-    dropdown_locked = False
+    if request.method == 'POST':
+        selected_team = request.form.get('team')
+        return redirect(url_for('year_selection', team=selected_team))
+
+    return render_template('team_selection.html', tmOptions=tmOptions)
+
+
+@app.route('/year-selection', methods=['GET', 'POST'])
+def year_selection():
+    # Get the selected team from the query parameters
+    selected_team = request.args.get('team')
+
+    # Database connection
+    engine = create_engine(engineStr)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    # Fetch years for the selected team
+    yearSQL = text("SELECT DISTINCT yearID FROM teams WHERE team_name = :team ORDER BY yearID;")
+    yrResult = session.execute(yearSQL, {'team': selected_team})
+    yrOptions = [row[0] for row in yrResult]
 
     if request.method == 'POST':
-        # Capture the selected team
-        selected_team = request.form.get('tmDropdown')
+        selected_year = request.form.get('year')
+        return redirect(url_for('summary', team=selected_team, year=selected_year))
 
-        # Avoid processing if no team is selected
-        if selected_team and selected_team != "":
-            dropdown_locked = True  # Lock the dropdown after submission
+    return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
 
-            # Fetch years for the selected team
-            yearSQL = text("SELECT DISTINCT yearID FROM teams WHERE team_name = :team ORDER BY yearID;")
-            yrResult = session.execute(yearSQL, {'team': selected_team})
-            yrOptions = [row[0] for row in yrResult]
 
-        # Capture selected year
-        yrSelect = request.form.get('yrDropdown')
+@app.route('/summary', methods=['GET'])
+def summary():
+    team = request.args.get('team')
+    year = request.args.get('year')
 
-        if yrSelect and yrSelect != "":
-            return f'You selected: Team - {selected_team}, Year - {yrSelect}'
+    # Example: Perform additional logic to fetch summary data
+    summary_data = {
+        "team": team,
+        "year": year,
+        "info": f"Summary of {team} in {year}."
+    }
 
-    # Render the template
-    return render_template(
-        'dropdown.html',
-        tmOptions=tmOptions,
-        yrOptions=yrOptions,
-        selected_team=selected_team,
-        dropdown_locked=dropdown_locked
-    )
+    return render_template('summary.html', summary=summary_data)
 
 
 if __name__ == '__main__':

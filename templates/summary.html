@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📊</div>
+        <h1>Summary for {{ summary.team }}</h1>
+        <p>Year: <strong>{{ summary.year }}</strong></p>
+        <p>{{ summary.info }}</p>
+        <form method="GET" action="/">
+            <button type="submit" class="back-button">Back to Home</button>
+        </form>
+        <div class="footer-note">Need a different year? Go back and select again.</div>
+    </div>
+</body>
+</html>
