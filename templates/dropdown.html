@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team/Year Selection</title>
+    <!-- Link to General CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h1>Find Info For Your Favorite Team!</h1>
+        <h3>1. Choose a team and submit</h3>
+        <h3>2.Choose a year then submit</h3>
+        <form method="POST">
+            <label for="tmDropdown">Choose a Team:</label>
+            <select
+                name="tmDropdown"
+                id="tmDropdown"
+                {% if dropdown_locked %}onmousedown="return false;"{% endif %}>
+                <option value="">--Select a Team--</option>
+                {% for option in tmOptions %}
+                    <option value="{{ option }}" {% if selected_team == option %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+            </select>
+
+            {% if selected_team %}
+                <label for="yrDropdown">Choose a Year:</label>
+                <select name="yrDropdown" id="yrDropdown">
+                    <option value="">--Select a Year--</option>
+                    {% for option in yrOptions %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <form method="GET" action="/">
+            <button type="submit" class="back-button">Reset Form</button>
+        </form>
+    </div>
+</body>
+</html>
