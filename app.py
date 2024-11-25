@@ -221,6 +221,38 @@ def summary():
                 "winning_pct": f"{row['winning_pct']:.3f}",
                 "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
             })
+        team_stats_query = text("""
+            SELECT 
+                team_G AS games,
+                team_W AS wins,
+                team_L AS losses,
+                ROUND(team_W / (team_W + team_L), 3) AS win_pct,
+                team_R AS runs_scored,
+                team_RA AS runs_allowed,
+                team_ERA AS era,
+                team_HR AS home_runs,
+                team_SB AS stolen_bases,
+                ROUND(team_FP, 3) AS fielding_pct
+            FROM teams
+            WHERE teamID = :teamID AND yearID = :year
+        """)
+
+        team_stats_result = connection.execute(team_stats_query, {"teamID": teamID, "year": year}).mappings().first()
+
+        # Format the team stats for the template
+        team_stats = {
+            "games": team_stats_result["games"],
+            "wins": team_stats_result["wins"],
+            "losses": team_stats_result["losses"],
+            "win_pct": f"{team_stats_result['win_pct']:.3f}" if team_stats_result["win_pct"] is not None else "N/A",
+            "runs_scored": team_stats_result["runs_scored"],
+            "runs_allowed": team_stats_result["runs_allowed"],
+            "era": f"{team_stats_result['era']:.2f}" if team_stats_result["era"] is not None else "N/A",
+            "home_runs": team_stats_result["home_runs"],
+            "stolen_bases": team_stats_result["stolen_bases"],
+            "fielding_pct": f"{team_stats_result['fielding_pct']:.3f}" if team_stats_result[
+                                                                              "fielding_pct"] is not None else "N/A",
+        }
 
 
     summary_data = {
@@ -230,8 +262,10 @@ def summary():
         "batting_stats": batting_stats,
         "pitching_stats": pitching_stats,
         "division_standings": division_standings,
+        "team_stats": team_stats
     }
 
     return render_template('summary.html', summary=summary_data)
+
 if __name__ == '__main__':
     app.run(debug=True)

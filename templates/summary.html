@@ -10,7 +10,6 @@
         .hidden-row {
             display: none;
         }
-
         .toggle-button {
             margin-top: 10px;
             padding: 10px 20px;
@@ -29,11 +28,57 @@
 </head>
 <body>
     <div class="container">
-        <!-- Team and Year Header -->
+
         <h1>{{ summary.team }} - {{ summary.year }}</h1>
         <p class="instructions">A detailed overview of {{ summary.team }}'s performance in {{ summary.year }}.</p>
 
-        <!-- Division Stats Section -->
+        <div class="stats-section">
+        <h2>Team Statistics</h2>
+            <div class="team-stats-cards">
+                <div class="team-stat-card">
+                    <span class="stat-title">Games</span>
+                    <span class="stat-value">{{ summary.team_stats.games }}</span>
+            </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Wins</span>
+                    <span class="stat-value">{{ summary.team_stats.wins }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Losses</span>
+                <span class="stat-value">{{ summary.team_stats.losses }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Win Percentage</span>
+                <span class="stat-value">{{ summary.team_stats.win_pct }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Runs Scored</span>
+                <span class="stat-value">{{ summary.team_stats.runs_scored }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Runs Allowed</span>
+                <span class="stat-value">{{ summary.team_stats.runs_allowed }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">ERA</span>
+                <span class="stat-value">{{ summary.team_stats.era }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Home Runs</span>
+                <span class="stat-value">{{ summary.team_stats.home_runs }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Stolen Bases</span>
+                <span class="stat-value">{{ summary.team_stats.stolen_bases }}</span>
+            </div>
+            <div class="team-stat-card">
+                <span class="stat-title">Fielding Percentage</span>
+                <span class="stat-value">{{ summary.team_stats.fielding_pct }}</span>
+            </div>
+        </div>
+    </div>
+
+        {% if summary.division_standings and summary.division_standings|length > 0 %}
         <div class="stats-section">
             <h2>Division Standings</h2>
             <table class="stats-table">
@@ -59,6 +104,8 @@
                 </tbody>
             </table>
         </div>
+        {% endif %}
+
 
         <!-- Batting Stats Section -->
         <div class="stats-section">
@@ -143,7 +190,6 @@
             </table>
             <button id="toggle-pitching" class="toggle-button">Show More</button>
         </div>
-
         <!-- Back Button -->
         <a href="/" class="back-button">Back to Home</a>
     </div>
