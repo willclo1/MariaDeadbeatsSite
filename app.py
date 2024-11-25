@@ -53,7 +53,8 @@ def year_selection():
 def summary():
     team = request.args.get('team')
     year = request.args.get('year')
-
+    show_all = request.args.get('show_all', 'false').lower() == 'true'
+    player_limit = None if show_all else 5
     if not team or not year:
         return "Error: Team and year must be specified", 400
 
@@ -64,7 +65,8 @@ def summary():
 
     with engine.connect() as connection:
         # Batting stats query
-        batting_team_query = text("""
+        # Batting stats query
+        batting_team_query = text(f"""
             SELECT 
                 p.nameFirst AS first_name,
                 p.nameLast AS last_name,
@@ -85,7 +87,6 @@ def summary():
             JOIN people p ON b.playerID = p.playerID
             WHERE b.teamID = :teamID AND b.yearId = :year
             ORDER BY b.b_G DESC, (b.b_H / b.b_AB) DESC
-            LIMIT 5;
         """)
         batting_result = connection.execute(batting_team_query, {"teamID": teamID, "year": year}).mappings().all()
 
@@ -127,14 +128,15 @@ def summary():
                 "obp": f"{obp:.3f}",
                 "slg": f"{slg:.3f}",
                 "ops": f"{ops:.3f}",
-                 "k_bb": f"{k_bb:.3f}" if k_bb is not 0 else 'N/A',
+                 "k_bb": f"{k_bb:.3f}" if k_bb != 0 else 'N/A',
                 "war": round(war, 2) if war != 'N/A' else 'N/A',
 
 
             })
 
         # Pitching stats query
-        pitching_team_query = text("""
+        # Pitching stats query
+        pitching_team_query = text(f"""
             SELECT 
                 p.nameFirst AS first_name,
                 p.nameLast AS last_name,
@@ -154,7 +156,6 @@ def summary():
             JOIN people p ON pt.playerID = p.playerID
             WHERE pt.teamID = :teamID AND pt.yearID = :year
             ORDER BY pt.p_G DESC, pt.p_ERA ASC
-            LIMIT 5;
         """)
         pitching_result = connection.execute(pitching_team_query, {"teamID": teamID, "year": year}).mappings().all()
 

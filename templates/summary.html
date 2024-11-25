@@ -6,6 +6,26 @@
     <title>Team Summary</title>
     <!-- Link to the CSS file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
+    <style>
+        .hidden-row {
+            display: none;
+        }
+
+        .toggle-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -35,7 +55,7 @@
                 </thead>
                 <tbody>
                     {% for player in summary.batting_stats %}
-                        <tr>
+                        <tr class="{{ 'hidden-row' if loop.index > 5 else '' }}">
                             <td>{{ player.first_name }}</td>
                             <td>{{ player.last_name }}</td>
                             <td>{{ player.games }}</td>
@@ -52,6 +72,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <button id="toggle-batting" class="toggle-button">Show More</button>
         </div>
 
         <!-- Pitching Stats Section -->
@@ -76,7 +97,7 @@
                 </thead>
                 <tbody>
                     {% for player in summary.pitching_stats %}
-                        <tr>
+                        <tr class="{{ 'hidden-row' if loop.index > 5 else '' }}">
                             <td>{{ player.first_name }}</td>
                             <td>{{ player.last_name }}</td>
                             <td>{{ player.games }}</td>
@@ -93,10 +114,53 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <button id="toggle-pitching" class="toggle-button">Show More</button>
         </div>
 
         <!-- Back Button -->
         <a href="/" class="back-button">Back to Home</a>
     </div>
+
+<script>
+    // Toggle Batting Stats
+    document.getElementById('toggle-batting').addEventListener('click', function () {
+        const rows = document.querySelectorAll('.stats-section:nth-of-type(1) tbody tr');
+        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(1) tbody .hidden-row');
+
+        if (hiddenRows.length > 0) {
+            // Show all rows
+            rows.forEach((row, index) => {
+                if (index >= 5) row.classList.remove('hidden-row');
+            });
+            this.textContent = 'Show Less';
+        } else {
+            // Hide rows after the first 5
+            rows.forEach((row, index) => {
+                if (index >= 5) row.classList.add('hidden-row');
+            });
+            this.textContent = 'Show More';
+        }
+    });
+
+    // Toggle Pitching Stats
+    document.getElementById('toggle-pitching').addEventListener('click', function () {
+        const rows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody tr');
+        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody .hidden-row');
+
+        if (hiddenRows.length > 0) {
+            // Show all rows
+            rows.forEach((row, index) => {
+                if (index >= 5) row.classList.remove('hidden-row');
+            });
+            this.textContent = 'Show Less';
+        } else {
+            // Hide rows after the first 5
+            rows.forEach((row, index) => {
+                if (index >= 5) row.classList.add('hidden-row');
+            });
+            this.textContent = 'Show More';
+        }
+    });
+</script>
 </body>
 </html>
