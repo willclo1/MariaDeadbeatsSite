@@ -178,29 +178,38 @@ def summary():
                 "hr_per_nine": round(hr_per_nine, 2),
                 "k_bb": round(k_bb, 2),
             })
+
+        division_league_query = text("""
+            SELECT divID, lgID
+            FROM teams
+            WHERE teamID = :teamID AND yearID = :year
+        """)
+        div_lg_result = connection.execute(division_league_query, {"teamID": teamID, "year": year}).mappings().first()
+
+        if not div_lg_result:
+            return f"Error: No division or league found for team '{team}' in year {year}.", 404
+
+        divID = div_lg_result["divID"]
+        lgID = div_lg_result["lgID"]
+
     # Division standings query
         division_query = text("""
-                SELECT 
-                    t.team_name, 
-                    t.team_W, 
-                    t.team_L,
-                    (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
-                    (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
-                     FROM teams top
-                     WHERE top.yearID = t.yearID 
-                       AND top.divID = t.divID
-                     ORDER BY top.team_W DESC
-                     LIMIT 1) AS GB
-                FROM teams t
-                WHERE t.divID = (
-                    SELECT divID 
-                    FROM teams 
-                    WHERE teamID = :teamID AND yearID = :year LIMIT 1
-                )
-                  AND t.yearID = :year
-                ORDER BY t.team_W DESC;
+            SELECT 
+                t.team_name,
+                t.team_W,
+                t.team_L,
+                (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
+                (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
+                 FROM teams top
+                 WHERE top.yearID = :year AND top.divID = :divID AND top.lgID = :lgID
+                 ORDER BY top.team_W DESC
+                 LIMIT 1) AS GB
+            FROM teams t
+            WHERE t.yearID = :year AND t.divID = :divID AND t.lgID = :lgID
+            ORDER BY t.team_W DESC;
         """)
-        division_result = connection.execute(division_query, {"teamID": teamID, "year": year}).mappings().all()
+        division_result = connection.execute(division_query,
+                                             {"year": year, "divID": divID, "lgID": lgID}).mappings().all()
 
         # Process division standings
         division_standings = []
@@ -220,7 +229,7 @@ def summary():
         "info": f"Summary of {team} in {year}.",
         "batting_stats": batting_stats,
         "pitching_stats": pitching_stats,
-        #"division_standings": division_standings,
+        "division_standings": division_standings,
     }
 
     return render_template('summary.html', summary=summary_data)
