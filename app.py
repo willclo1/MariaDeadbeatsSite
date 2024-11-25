@@ -6,7 +6,7 @@ from cfg import engineStr
 from teamMapping import team_map
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # Required for session management
+app.secret_key = "your_secret_key"
 
 engine = create_engine(engineStr)
 @app.route('/', methods=['GET', 'POST'])
@@ -28,15 +28,12 @@ def home():
 
 @app.route('/year-selection', methods=['GET', 'POST'])
 def year_selection():
-    # Get the selected team from the query parameters
     selected_team = request.args.get('team')
 
-    # Database connection
-    engine = create_engine(engineStr)
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Fetch years for the selected team
+
     yearSQL = text("SELECT DISTINCT yearID FROM teams WHERE team_name = :team ORDER BY yearID;")
     yrResult = session.execute(yearSQL, {'team': selected_team})
     yrOptions = [row[0] for row in yrResult]
@@ -60,7 +57,7 @@ def summary():
         return f"Error: Team '{team}' not found in the mapping.", 404
 
     with engine.connect() as connection:
-        # Batting stats query
+
         batting_team_query = text(f"""
             SELECT 
                 p.nameFirst AS first_name,
@@ -124,7 +121,6 @@ def summary():
                 "war": round(war, 2) if war != 'N/A' else 'N/A',
             })
 
-        # Pitching stats query
         pitching_team_query = text(f"""
             SELECT 
                 p.nameFirst AS first_name,
@@ -191,27 +187,42 @@ def summary():
 
         divID = div_lg_result["divID"]
         lgID = div_lg_result["lgID"]
+        if int(year) >= 1969:
+            division_query = text("""
+                SELECT 
+                    t.team_name,
+                    t.team_W,
+                    t.team_L,
+                    (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
+                    (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
+                     FROM teams top
+                     WHERE top.yearID = :year AND top.divID = :divID AND top.lgID = :lgID
+                     ORDER BY top.team_W DESC
+                     LIMIT 1) AS GB
+                FROM teams t
+                WHERE t.yearID = :year AND t.divID = :divID AND t.lgID = :lgID
+                ORDER BY t.team_W DESC;
+            """)
+            division_result = connection.execute(division_query,
+                                                 {"year": year, "divID": divID, "lgID": lgID}).mappings().all()
+        else:
+            league_query = text("""
+                SELECT 
+                    t.team_name,
+                    t.team_W,
+                    t.team_L,
+                    (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
+                    (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
+                     FROM teams top
+                     WHERE top.yearID = :year AND top.lgID = :lgID
+                     ORDER BY top.team_W DESC
+                     LIMIT 1) AS GB
+                FROM teams t
+                WHERE t.yearID = :year AND t.lgID = :lgID
+                ORDER BY t.team_W DESC;
+            """)
+            division_result = connection.execute(league_query, {"year": year, "lgID": lgID}).mappings().all()
 
-    # Division standings query
-        division_query = text("""
-            SELECT 
-                t.team_name,
-                t.team_W,
-                t.team_L,
-                (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
-                (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
-                 FROM teams top
-                 WHERE top.yearID = :year AND top.divID = :divID AND top.lgID = :lgID
-                 ORDER BY top.team_W DESC
-                 LIMIT 1) AS GB
-            FROM teams t
-            WHERE t.yearID = :year AND t.divID = :divID AND t.lgID = :lgID
-            ORDER BY t.team_W DESC;
-        """)
-        division_result = connection.execute(division_query,
-                                             {"year": year, "divID": divID, "lgID": lgID}).mappings().all()
-
-        # Process division standings
         division_standings = []
         for row in division_result:
             division_standings.append({
@@ -221,6 +232,7 @@ def summary():
                 "winning_pct": f"{row['winning_pct']:.3f}",
                 "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
             })
+
         team_stats_query = text("""
             SELECT 
                 team_G AS games,
@@ -239,7 +251,6 @@ def summary():
 
         team_stats_result = connection.execute(team_stats_query, {"teamID": teamID, "year": year}).mappings().first()
 
-        # Format the team stats for the template
         team_stats = {
             "games": team_stats_result["games"],
             "wins": team_stats_result["wins"],
