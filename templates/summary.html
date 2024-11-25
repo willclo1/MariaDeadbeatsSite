@@ -33,6 +33,33 @@
         <h1>{{ summary.team }} - {{ summary.year }}</h1>
         <p class="instructions">A detailed overview of {{ summary.team }}'s performance in {{ summary.year }}.</p>
 
+        <!-- Division Stats Section -->
+        <div class="stats-section">
+            <h2>Division Standings</h2>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Wins</th>
+                        <th>Losses</th>
+                        <th>Winning Percentage</th>
+                        <th>Games Back</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for team in summary.division_standings %}
+                        <tr>
+                            <td>{{ team.team_name }}</td>
+                            <td>{{ team.wins }}</td>
+                            <td>{{ team.losses }}</td>
+                            <td>{{ team.winning_pct }}</td>
+                            <td>{{ team.games_back }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <!-- Batting Stats Section -->
         <div class="stats-section">
             <h2>Batting Statistics</h2>
@@ -124,17 +151,15 @@
 <script>
     // Toggle Batting Stats
     document.getElementById('toggle-batting').addEventListener('click', function () {
-        const rows = document.querySelectorAll('.stats-section:nth-of-type(1) tbody tr');
-        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(1) tbody .hidden-row');
+        const rows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody tr');
+        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody .hidden-row');
 
         if (hiddenRows.length > 0) {
-            // Show all rows
             rows.forEach((row, index) => {
                 if (index >= 5) row.classList.remove('hidden-row');
             });
             this.textContent = 'Show Less';
         } else {
-            // Hide rows after the first 5
             rows.forEach((row, index) => {
                 if (index >= 5) row.classList.add('hidden-row');
             });
@@ -144,17 +169,15 @@
 
     // Toggle Pitching Stats
     document.getElementById('toggle-pitching').addEventListener('click', function () {
-        const rows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody tr');
-        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody .hidden-row');
+        const rows = document.querySelectorAll('.stats-section:nth-of-type(3) tbody tr');
+        let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(3) tbody .hidden-row');
 
         if (hiddenRows.length > 0) {
-            // Show all rows
             rows.forEach((row, index) => {
                 if (index >= 5) row.classList.remove('hidden-row');
             });
             this.textContent = 'Show Less';
         } else {
-            // Hide rows after the first 5
             rows.forEach((row, index) => {
                 if (index >= 5) row.classList.add('hidden-row');
             });

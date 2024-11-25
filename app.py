@@ -11,11 +11,9 @@ app.secret_key = "your_secret_key"  # Required for session management
 engine = create_engine(engineStr)
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    # Database connection
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Fetch all teams
     teamSQL = text("SELECT DISTINCT team_name FROM teams ORDER BY yearID DESC;")
     teamResult = session.execute(teamSQL)
     tmOptions = [row[0] for row in teamResult]
@@ -53,8 +51,6 @@ def year_selection():
 def summary():
     team = request.args.get('team')
     year = request.args.get('year')
-    show_all = request.args.get('show_all', 'false').lower() == 'true'
-    player_limit = None if show_all else 5
     if not team or not year:
         return "Error: Team and year must be specified", 400
 
@@ -64,7 +60,6 @@ def summary():
         return f"Error: Team '{team}' not found in the mapping.", 404
 
     with engine.connect() as connection:
-        # Batting stats query
         # Batting stats query
         batting_team_query = text(f"""
             SELECT 
@@ -90,7 +85,6 @@ def summary():
         """)
         batting_result = connection.execute(batting_team_query, {"teamID": teamID, "year": year}).mappings().all()
 
-        # Calculate advanced batting stats
         batting_stats = []
         for row in batting_result:
             at_bats = row["at_bats"] or 0
@@ -102,13 +96,11 @@ def summary():
             doubles = row["doubles"] or 0
             triples = row["triples"] or 0
             home_runs = row["home_runs"] or 0
-            war = row["war"] or 'N/A'
+            war = row["war"] if row["war"] is not None else 'N/A'
 
-            # Prevent division by zero
             obp_denominator = at_bats + walks + hit_by_pitch + sac_flies
             slg_denominator = at_bats
 
-            # Compute stats
             obp = (hits + walks + hit_by_pitch) / obp_denominator if obp_denominator > 0 else 0
             slg = (hits + 2 * doubles + 3 * triples + 4 * home_runs) / slg_denominator if slg_denominator > 0 else 0
             ops = obp + slg
@@ -128,13 +120,10 @@ def summary():
                 "obp": f"{obp:.3f}",
                 "slg": f"{slg:.3f}",
                 "ops": f"{ops:.3f}",
-                 "k_bb": f"{k_bb:.3f}" if k_bb != 0 else 'N/A',
+                "k_bb": f"{k_bb:.3f}" if walks > 0 else 'N/A',
                 "war": round(war, 2) if war != 'N/A' else 'N/A',
-
-
             })
 
-        # Pitching stats query
         # Pitching stats query
         pitching_team_query = text(f"""
             SELECT 
@@ -159,7 +148,6 @@ def summary():
         """)
         pitching_result = connection.execute(pitching_team_query, {"teamID": teamID, "year": year}).mappings().all()
 
-        # Calculate advanced pitching stats
         pitching_stats = []
         for row in pitching_result:
             outs_pitched = row["outs_pitched"] or 0
@@ -170,7 +158,6 @@ def summary():
 
             innings_pitched = outs_pitched / 3 if outs_pitched > 0 else 0
 
-            # Prevent division by zero
             whip = (walks + hits) / innings_pitched if innings_pitched > 0 else 0
             k_per_nine = (strikeouts / innings_pitched * 9) if innings_pitched > 0 else 0
             bb_per_nine = (walks / innings_pitched * 9) if innings_pitched > 0 else 0
@@ -191,14 +178,49 @@ def summary():
                 "hr_per_nine": round(hr_per_nine, 2),
                 "k_bb": round(k_bb, 2),
             })
+    # Division standings query
+        division_query = text("""
+                SELECT 
+                    t.team_name, 
+                    t.team_W, 
+                    t.team_L,
+                    (t.team_W / (t.team_W + t.team_L)) AS winning_pct,
+                    (SELECT (ABS(top.team_W - t.team_W) + ABS(top.team_L - t.team_L)) / 2
+                     FROM teams top
+                     WHERE top.yearID = t.yearID 
+                       AND top.divID = t.divID
+                     ORDER BY top.team_W DESC
+                     LIMIT 1) AS GB
+                FROM teams t
+                WHERE t.divID = (
+                    SELECT divID 
+                    FROM teams 
+                    WHERE teamID = :teamID AND yearID = :year LIMIT 1
+                )
+                  AND t.yearID = :year
+                ORDER BY t.team_W DESC;
+        """)
+        division_result = connection.execute(division_query, {"teamID": teamID, "year": year}).mappings().all()
 
-    # Pass the data to the template
+        # Process division standings
+        division_standings = []
+        for row in division_result:
+            division_standings.append({
+                "team_name": row["team_name"],
+                "wins": row["team_W"],
+                "losses": row["team_L"],
+                "winning_pct": f"{row['winning_pct']:.3f}",
+                "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
+            })
+
+
     summary_data = {
         "team": team,
         "year": year,
         "info": f"Summary of {team} in {year}.",
         "batting_stats": batting_stats,
         "pitching_stats": pitching_stats,
+        #"division_standings": division_standings,
     }
 
     return render_template('summary.html', summary=summary_data)
