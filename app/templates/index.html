@@ -9,12 +9,15 @@
         {% endif %}
     </head>
     <body>
-        {% if user.username %}
-            <h1>Hi, {{ username }}!</h1>
-        {% else %}
-            <h1>Welcome to out database project!</h1>
-            <br/>
-            <h1>Please navigate to the login page to register!</h1>
-        {% endif %}
+        <h1>Hi, {{ current_user.username }}!</h1>
+        <h1>Welcome to out database project!</h1>
+        <h1>Please navigate to the site of your choice:</h1>
+        <a href="{{ url_for('team_selection') }}">Team Summary</a>
+        <br/>
+        <a href="{{ url_for('comparePlayers') }}">Comparing Players</a>
+        <br/>
+        <a href="/">Depth Chart</a>
+
+
     </body>
 {% endblock %}

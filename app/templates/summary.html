@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Team Summary</title>
-        <!-- Link to the CSS file -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/summary.css') }}">
         <style>
             .hidden-row {
                 display: none;
             }
-
             .toggle-button {
                 margin-top: 10px;
                 padding: 10px 20px;
@@ -26,15 +25,67 @@
                 background-color: #0056b3;
             }
         </style>
+    </head>
     <body>
         <div class="container">
-            <!-- Team and Year Header -->
             <h1>{{ summary.team }} - {{ summary.year }}</h1>
             <p class="instructions">A detailed overview of {{ summary.team }}'s performance in {{ summary.year }}.</p>
 
-            <!-- Division Stats Section -->
             <div class="stats-section">
-                <h2>Division Standings</h2>
+            <h2>Team Statistics</h2>
+                <div class="team-stats-cards">
+                    <div class="team-stat-card">
+                        <span class="stat-title">Games</span>
+                        <span class="stat-value">{{ summary.team_stats.games }}</span>
+                </div>
+                    <div class="team-stat-card">
+                        <span class="stat-title">Wins</span>
+                        <span class="stat-value">{{ summary.team_stats.wins }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Losses</span>
+                    <span class="stat-value">{{ summary.team_stats.losses }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Win Percentage</span>
+                    <span class="stat-value">{{ summary.team_stats.win_pct }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Runs Scored</span>
+                    <span class="stat-value">{{ summary.team_stats.runs_scored }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Runs Allowed</span>
+                    <span class="stat-value">{{ summary.team_stats.runs_allowed }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">ERA</span>
+                    <span class="stat-value">{{ summary.team_stats.era }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Home Runs</span>
+                    <span class="stat-value">{{ summary.team_stats.home_runs }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Stolen Bases</span>
+                    <span class="stat-value">{{ summary.team_stats.stolen_bases }}</span>
+                </div>
+                <div class="team-stat-card">
+                    <span class="stat-title">Fielding Percentage</span>
+                    <span class="stat-value">{{ summary.team_stats.fielding_pct }}</span>
+                </div>
+            </div>
+        </div>
+
+            {% if summary.division_standings and summary.division_standings|length > 0 %}
+            <div class="stats-section">
+                <h2>
+                    {% if summary.year|int < 1969 %}
+                        League Standings
+                    {% else %}
+                        Division Standings
+                    {% endif %}
+                 </h2>
                 <table class="stats-table">
                     <thead>
                         <tr>
@@ -58,9 +109,9 @@
                     </tbody>
                 </table>
             </div>
+            {% endif %}
 
-            <!-- Batting Stats Section -->
-            <div class="stats-section">
+            <div class="stats-section" id="batting-stats-section">
                 <h2>Batting Statistics</h2>
                 <table class="stats-table">
                     <thead>
@@ -101,8 +152,7 @@
                 <button id="toggle-batting" class="toggle-button">Show More</button>
             </div>
 
-            <!-- Pitching Stats Section -->
-            <div class="stats-section">
+            <div class="stats-section" id="pitching-stats-section">
                 <h2>Pitching Statistics</h2>
                 <table class="stats-table">
                     <thead>
@@ -142,46 +192,36 @@
                 </table>
                 <button id="toggle-pitching" class="toggle-button">Show More</button>
             </div>
-
-            <!-- Back Button -->
-            <a href="/static" class="back-button">Back to Home</a>
+            <a href="/" class="back-button">Back to Home</a>
         </div>
 
     <script>
-        // Toggle Batting Stats
-        document.getElementById('toggle-batting').addEventListener('click', function () {
-            const rows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody tr');
-            let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(2) tbody .hidden-row');
+        // Toggle function for any stats section
+        function toggleRows(sectionId, buttonId) {
+            const rows = document.querySelectorAll(`#${sectionId} tbody tr`);
+            const button = document.getElementById(buttonId);
+            let hiddenRows = document.querySelectorAll(`#${sectionId} tbody .hidden-row`);
 
             if (hiddenRows.length > 0) {
                 rows.forEach((row, index) => {
                     if (index >= 5) row.classList.remove('hidden-row');
                 });
-                this.textContent = 'Show Less';
+                button.textContent = 'Show Less';
             } else {
                 rows.forEach((row, index) => {
                     if (index >= 5) row.classList.add('hidden-row');
                 });
-                this.textContent = 'Show More';
+                button.textContent = 'Show More';
             }
+        }
+
+        // Attach event listeners to each toggle button
+        document.getElementById('toggle-batting').addEventListener('click', function () {
+            toggleRows('batting-stats-section', 'toggle-batting');
         });
 
-        // Toggle Pitching Stats
         document.getElementById('toggle-pitching').addEventListener('click', function () {
-            const rows = document.querySelectorAll('.stats-section:nth-of-type(3) tbody tr');
-            let hiddenRows = document.querySelectorAll('.stats-section:nth-of-type(3) tbody .hidden-row');
-
-            if (hiddenRows.length > 0) {
-                rows.forEach((row, index) => {
-                    if (index >= 5) row.classList.remove('hidden-row');
-                });
-                this.textContent = 'Show Less';
-            } else {
-                rows.forEach((row, index) => {
-                    if (index >= 5) row.classList.add('hidden-row');
-                });
-                this.textContent = 'Show More';
-            }
+            toggleRows('pitching-stats-section', 'toggle-pitching');
         });
     </script>
     </body>

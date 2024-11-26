@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <head>
+        <title>Player Comparison</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background: linear-gradient(135deg, #007bff, #6c757d);
+                color: #f9f9f9;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                background: #fff;
+                color: #333;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                width: 100%;
+                max-width: 600px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            h1 {
+                color: #007bff;
+                margin-bottom: 20px;
+                font-size: 24px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+
+            th, td {
+                padding: 15px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+            th {
+                background-color: #007bff;
+                color: #fff;
+                font-size: 1.1em;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            tr:hover {
+                background-color: #e9f7fc;
+            }
+
+            td {
+                font-size: 1em;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                margin-top: 20px;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+                transform: scale(1.02);
+            }
+
+            .back-button {
+                background-color: #6c757d;
+                margin-top: 10px;
+            }
+
+            .back-button:hover {
+                background-color: #5a6268;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Player Comparison</h1>
+            {% if message %}
+                <p style="color: red;">{{ message }}</p>
+            {% endif %}
+            <table>
+                <tr>
+                    <th>Stat</th>
+                    <th>{{ player1['nameFirst'] }} {{ player1['nameLast'] }}</th>
+                    <th>{{ player2['nameFirst'] }} {{ player2['nameLast'] }}</th>
+                </tr>
+                <tr>
+                    <td>Total Hits</td>
+                    <td>{{ player1['total_hits'] }}</td>
+                    <td>{{ player2['total_hits'] }}</td>
+                </tr>
+                <tr>
+                    <td>Home Runs</td>
+                    <td>{{ player1['total_home_runs'] }}</td>
+                    <td>{{ player2['total_home_runs'] }}</td>
+                </tr>
+                <tr>
+                    <td>RBIs</td>
+                    <td>{{ player1['total_rbi'] }}</td>
+                    <td>{{ player2['total_rbi'] }}</td>
+                </tr>
+                <tr>
+                    <td>Career Average</td>
+                    <td>{{ player1['avg'] }}</td>
+                    <td>{{ player2['avg'] }}</td>
+                </tr>
+                <tr>
+                    <td>Career War</td>
+                    <td>{{ player1['total_war'] }}</td>
+                    <td>{{ player2['total_war'] }}</td>
+                </tr>
+            </table>
+            <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
+        </div>
+    </body>
+{% endblock %}

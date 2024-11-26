@@ -106,3 +106,36 @@ body {
     background-color: #5a6268;
     transform: scale(1.02);
 }
+
+.team-stats-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.team-stat-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
+    text-align: center;
+    flex: 1 1 calc(25% - 20px); /* Four cards per row with space in-between */
+    min-width: 150px;
+}
+
+.stat-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+}

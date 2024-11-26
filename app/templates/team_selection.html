@@ -13,8 +13,10 @@
             <h1>Select Your Favorite Team</h1>
             <div class="instructions">
                 <p>Choose your team from the list below and click <strong>Submit</strong> to continue.</p>
+                <p>If you want to compare two players career <strong>batting</strong> stats, please click the <strong>Compare Two Players</strong>
+                    button below.</p>
             </div>
-            <form method="POST" action={{ url_for('team_selection') }}>
+            <form method="POST" action="/static">
                 <label for="team">Choose a Team:</label>
                 <select name="team" id="team">
                     <option value="">--Select a Team--</option>
@@ -24,6 +26,7 @@
                 </select>
                 <button type="submit">Submit</button>
             </form>
+            <a href="/comparePlayers" class="back-button">Compare two players!</a>
         </div>
     </body>
 {% endblock %}
