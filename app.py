@@ -3,7 +3,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
-from teamMapping import team_map
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
@@ -51,12 +50,20 @@ def summary():
     if not team or not year:
         return "Error: Team and year must be specified", 400
 
-    teamID = team_map.get(team)
-
-    if not teamID:
-        return f"Error: Team '{team}' not found in the mapping.", 404
 
     with engine.connect() as connection:
+        team_query = text("""
+                SELECT teamID
+                FROM teams
+                WHERE yearID = :year AND team_name = :team
+                LIMIT 1;
+            """)
+        result = connection.execute(team_query, {"year": year, "team": team}).mappings().first()
+
+        if not result:
+            return f"Error: Team '{team}' not found for the year {year}.", 404
+
+        teamID = result["teamID"]
 
         batting_team_query = text(f"""
             SELECT 
@@ -78,7 +85,7 @@ def summary():
             JOIN teams t ON b.teamID = t.teamID AND b.yearId = t.yearID
             JOIN people p ON b.playerID = p.playerID
             WHERE b.teamID = :teamID AND b.yearId = :year
-            ORDER BY b.b_G DESC, (b.b_H / b.b_AB) DESC
+            ORDER BY b.b_AB DESC, (b.b_H / b.b_AB), b.b_G DESC
         """)
         batting_result = connection.execute(batting_team_query, {"teamID": teamID, "year": year}).mappings().all()
 
@@ -103,23 +110,24 @@ def summary():
             ops = obp + slg
             avg = hits / at_bats if at_bats > 0 else 0
             k_bb = strikeouts / walks if walks > 0 else 0
+            if at_bats != 0:
+                batting_stats.append({
+                    "first_name": row["first_name"],
+                    "last_name": row["last_name"],
+                    "games": row["games"],
+                    "at_bats": at_bats,
+                    "hits": hits,
+                    "home_runs": home_runs,
+                    "walks": walks,
+                    "strikeouts": strikeouts,
+                    "avg": f"{avg:.3f}",
+                    "obp": f"{obp:.3f}",
+                    "slg": f"{slg:.3f}",
+                    "ops": f"{ops:.3f}",
+                    "k_bb": f"{k_bb:.3f}" if walks > 0 else 'N/A',
+                    "war": round(war, 2) if war != 'N/A' else 'N/A',
+                })
 
-            batting_stats.append({
-                "first_name": row["first_name"],
-                "last_name": row["last_name"],
-                "games": row["games"],
-                "at_bats": at_bats,
-                "hits": hits,
-                "home_runs": home_runs,
-                "walks": walks,
-                "strikeouts": strikeouts,
-                "avg": f"{avg:.3f}",
-                "obp": f"{obp:.3f}",
-                "slg": f"{slg:.3f}",
-                "ops": f"{ops:.3f}",
-                "k_bb": f"{k_bb:.3f}" if walks > 0 else 'N/A',
-                "war": round(war, 2) if war != 'N/A' else 'N/A',
-            })
 
         pitching_team_query = text(f"""
             SELECT 
@@ -187,7 +195,7 @@ def summary():
 
         divID = div_lg_result["divID"]
         lgID = div_lg_result["lgID"]
-        if int(year) >= 1969:
+        if int(year) >= 1969 and divID and lgID:
             division_query = text("""
                 SELECT 
                     t.team_name,
@@ -205,7 +213,16 @@ def summary():
             """)
             division_result = connection.execute(division_query,
                                                  {"year": year, "divID": divID, "lgID": lgID}).mappings().all()
-        else:
+            division_standings = []
+            for row in division_result:
+                division_standings.append({
+                    "team_name": row["team_name"],
+                    "wins": row["team_W"],
+                    "losses": row["team_L"],
+                    "winning_pct": f"{row['winning_pct']:.3f}",
+                    "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
+                })
+        elif lgID != 'NA':
             league_query = text("""
                 SELECT 
                     t.team_name,
@@ -222,16 +239,18 @@ def summary():
                 ORDER BY t.team_W DESC;
             """)
             division_result = connection.execute(league_query, {"year": year, "lgID": lgID}).mappings().all()
+            division_standings = []
+            for row in division_result:
+                division_standings.append({
+                    "team_name": row["team_name"],
+                    "wins": row["team_W"],
+                    "losses": row["team_L"],
+                    "winning_pct": f"{row['winning_pct']:.3f}",
+                    "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
+                })
+        else:
+            division_standings = []
 
-        division_standings = []
-        for row in division_result:
-            division_standings.append({
-                "team_name": row["team_name"],
-                "wins": row["team_W"],
-                "losses": row["team_L"],
-                "winning_pct": f"{row['winning_pct']:.3f}",
-                "games_back": f"{row['GB']:.1f}" if row["GB"] is not None else "0.0",
-            })
 
         team_stats_query = text("""
             SELECT 
@@ -277,6 +296,66 @@ def summary():
     }
 
     return render_template('summary.html', summary=summary_data)
+
+
+@app.route("/comparePlayers", methods=['GET', 'POST'])
+def comparePlayers():
+    message = None
+
+    if request.method == 'POST':
+        player1_name = request.form['player1']
+        player2_name = request.form['player2']
+
+        # Validate input
+        try:
+            player1_first, player1_last = player1_name.split()
+            player2_first, player2_last = player2_name.split()
+        except ValueError:
+            message = "Invalid input. Falling back to Babe Ruth and Willie Mays."
+
+        with engine.connect() as connection:
+            player_query = text("""
+                SELECT p.playerID, p.nameFirst, p.nameLast, 
+                       SUM(b.b_H) AS total_hits, 
+                       SUM(b.b_HR) AS total_home_runs,
+                       SUM(b.b_RBI) AS total_rbi,
+                       AVG(b.b_H / b.b_AB) AS avg,
+                       sum(b.b_WAR) as total_war
+                FROM people p
+                JOIN batting b ON p.playerID = b.playerID
+                WHERE p.nameFirst = :first AND p.nameLast = :last
+                GROUP BY p.playerID;
+            """)
+
+            # Try to fetch provided player stats
+            player1_stats = connection.execute(player_query, {"first": player1_first, "last": player1_last}).mappings().first() if 'player1_first' in locals() else None
+            player2_stats = connection.execute(player_query, {"first": player2_first, "last": player2_last}).mappings().first() if 'player2_first' in locals() else None
+
+
+            if not player1_stats or not player2_stats:
+                player1_fallback = {"first": "Babe", "last": "Ruth"}
+                player2_fallback = {"first": "Willie", "last": "Mays"}
+                message = "Invalid input. Falling back to Babe Ruth and Willie Mays."
+                player1_stats = connection.execute(player_query, player1_fallback).mappings().first()
+                player2_stats = connection.execute(player_query, player2_fallback).mappings().first()
+            player1_stats = dict(player1_stats) if player1_stats else None
+            player2_stats = dict(player2_stats) if player2_stats else None
+
+            # Format averages
+            if player1_stats and 'avg' in player1_stats and player1_stats['avg'] is not None:
+                player1_stats['avg'] = f"{player1_stats['avg']:.3f}"
+            if player2_stats and 'avg' in player2_stats and player2_stats['avg'] is not None:
+                player2_stats['avg'] = f"{player2_stats['avg']:.3f}"
+
+        return render_template(
+            "compare.html",
+            player1=player1_stats,
+            player2=player2_stats,
+            message=message
+        )
+
+    # If GET request, render the compare form
+    return render_template("compare_form.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
