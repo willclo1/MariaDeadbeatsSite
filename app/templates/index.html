@@ -1,23 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <head>
+    <div class="container">
+        <div class="icon">⚾</div>
         {% if title %}
-            <title>{{ title }} - database project</title>
+            <h1>{{ title }} - Database Project</h1>
         {% else %}
-            <title>Welcome to out database project</title>
+            <h1>Welcome to Our Database Project</h1>
         {% endif %}
-    </head>
-    <body>
-        <h1>Hi, {{ current_user.username }}!</h1>
-        <h1>Welcome to out database project!</h1>
-        <h1>Please navigate to the site of your choice:</h1>
-        <a href="{{ url_for('team_selection') }}">Team Summary</a>
-        <br/>
-        <a href="{{ url_for('comparePlayers') }}">Comparing Players</a>
-        <br/>
-        <a href="/">Depth Chart</a>
 
+        <h2>Hi, {{ current_user.username }}!</h2>
+        <p class="instructions">Please navigate to the site of your choice:</p>
 
-    </body>
+        <div class="nav-links">
+            <a href="{{ url_for('team_selection') }}" class="back-button">Team Summary</a>
+            <a href="{{ url_for('comparePlayers') }}" class="back-button">Comparing Players</a>
+            <a href="/" class="back-button">Depth Chart</a>
+        </div>
+    </div>
 {% endblock %}

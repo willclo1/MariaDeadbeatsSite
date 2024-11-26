@@ -55,7 +55,6 @@ def logout():
     return redirect(url_for('index'))
 
 # not sure if we need this, makes it work to import the css, probably a fix?
-@app.route('/static', methods=['POST'])
 @app.route('/team-selection', methods=['GET', 'POST'])
 @login_required
 def team_selection():

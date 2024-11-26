@@ -1,14 +1,11 @@
-/* General Page Styling */
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #007bff, #6c757d);
     color: #f9f9f9;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .container {
@@ -19,6 +16,7 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     width: 90%;
     max-width: 1200px;
+    margin: 20px auto; /* Ensure space at the top and bottom */
     text-align: center;
 }
 
@@ -41,17 +39,6 @@ body {
     text-align: left;
 }
 
-/* Section Titles */
-.stats-section h2 {
-    font-size: 24px;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
 /* Stats Table Styling */
 .stats-table {
     margin-bottom: 30px;
@@ -64,7 +51,8 @@ body {
     margin-top: 10px;
 }
 
-.stats-table th, .stats-table td {
+.stats-table th,
+.stats-table td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
@@ -107,11 +95,12 @@ body {
     transform: scale(1.02);
 }
 
+/* Card Layout for Stats */
 .team-stats-cards {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: space-between;
+    justify-content: center; /* Center align cards */
     margin-top: 20px;
 }
 
