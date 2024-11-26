@@ -1,15 +1,63 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask_login import login_required, current_user, login_user, logout_user
+import sqlalchemy as sa
+from app import db
+from app import app
+from app.forms import LoginForm, RegistrationForm
+from flask import flash
+from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
-
-app = Flask(__name__)
-app.secret_key = "your_secret_key"
+from app.models import Users
+from urllib.parse import urlsplit
+import os
+from cfg import basedir
 
 engine = create_engine(engineStr)
-@app.route('/', methods=['GET', 'POST'])
-def home():
+# set a path so templates can be read with any file path
+templates_path = os.path.join(basedir, 'templates')
+
+@app.route('/home')
+@app.route('/')
+@app.route('/index')
+@login_required
+def index():
+    # here is where we could query for interesting user info - cookies??
+
+    return render_template('index.html', title='Home Page')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('team_selection'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(Users).where(Users.username == form.username.data))
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        print("user is auth: ",user.is_authenticated)
+        print("we are here, we are waiting")
+        # next_page = request.args.get('next')
+        # # secures application by using urlsplit to disallow malicious urls
+        # if not next_page or urlsplit(next_page).netloc != '':
+        #     next_page = url_for('team_selection')
+        # return redirect(next_page)
+        return redirect(url_for('team_selection'))
+    return render_template('login.html', title='Sign In', form=form)
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+# not sure if we need this, makes it work to import the css, probably a fix?
+@app.route('/team-selection', methods=['GET', 'POST'])
+@login_required
+def team_selection():
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -24,8 +72,23 @@ def home():
 
     return render_template('team_selection.html', tmOptions=tmOptions)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = Users(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
 
 @app.route('/year-selection', methods=['GET', 'POST'])
+@login_required
 def year_selection():
     selected_team = request.args.get('team')
 
@@ -43,7 +106,9 @@ def year_selection():
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
 
+
 @app.route('/summary', methods=['GET'])
+@login_required
 def summary():
     team = request.args.get('team')
     year = request.args.get('year')
@@ -297,8 +362,8 @@ def summary():
 
     return render_template('summary.html', summary=summary_data)
 
-
 @app.route("/comparePlayers", methods=['GET', 'POST'])
+@login_required
 def comparePlayers():
     message = None
 
@@ -357,5 +422,3 @@ def comparePlayers():
     # If GET request, render the compare form
     return render_template("compare_form.html")
 
-if __name__ == '__main__':
-    app.run(debug=True)
