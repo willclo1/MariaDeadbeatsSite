@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <head>
+        {% if title %}
+            <title>{{ title }} - database project</title>
+        {% else %}
+            <title>Welcome to out database project</title>
+        {% endif %}
+    </head>
+    <body>
+        {% if user.username %}
+            <h1>Hi, {{ username }}!</h1>
+        {% else %}
+            <h1>Welcome to out database project!</h1>
+            <br/>
+            <h1>Please navigate to the login page to register!</h1>
+        {% endif %}
+    </body>
+{% endblock %}
