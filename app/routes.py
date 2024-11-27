@@ -422,3 +422,62 @@ def comparePlayers():
     # If GET request, render the compare form
     return render_template("compare_form.html")
 
+@app.route('/depth_chart', methods=['GET'])
+@login_required
+def depth_chart():
+    team = request.args.get('team')
+    year = request.args.get('year')
+
+    if not team or not year:
+        return "Error: Team and year must be specified", 400
+
+    with engine.connect() as connection:
+        team_query = text("""
+            SELECT teamID
+            FROM teams
+            WHERE yearID = :year AND teamID = :team
+            LIMIT 1;
+            """)
+        result = connection.execute(team_query, {"year": year, "team": team}).mappings().first()
+        if not result:
+            return f"Error: Team {team} not found for year {year}.", 404
+        teamID = result["teamID"]
+
+        depth_chart_query = text("""
+            SELECT
+                f.position AS position,
+                f.playerID,
+                p.nameFirst AS first_name,
+                p.nameLast AS last_name,
+                f.f_G AS games_played,
+                t.team_G AS team_games_played,
+                ROUND((f.f_G / t.team_G) * 100, 2) AS playing_time_percentage
+            FROM fielding f
+            JOIN teams t ON f.teamID = t.teamID AND f.yearID = t.yearID
+            JOIN people p ON f.playerID = p.playerID AND f.teamID = t.teamID
+            WHERE f.yearID = :year AND f.teamID = :team
+            ORDER BY f.position, games_played DESC;
+                """)
+        depth_chart_result = connection.execute(depth_chart_query, {"year": year, "teamID": teamID}).mappings().all()
+
+        depth_chart = {}
+        for row in depth_chart_result:
+            position = row["position"]
+            player_info = {
+                "name": f"{row['nameFirst']} {row['nameLast']}",
+                "games_played": row["games_played"],
+                "playing_time_percentage": row["playing_time_percentage"]
+            }
+            if position not in depth_chart:
+                depth_chart[position] = []
+            depth_chart[position].append(player_info)
+
+    return render_template(
+        'depth_chart.html',
+        depth_chart=depth_chart,
+        team=team,
+        year=year
+    )
+
+
+
