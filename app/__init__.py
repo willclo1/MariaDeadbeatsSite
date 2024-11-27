@@ -18,6 +18,5 @@ login.login_view = 'login'
 
 
 from app.models import Users
-from app.models import Admins
 
 from app import routes

@@ -5,7 +5,7 @@ from app import app
 from app.forms import LoginForm, RegistrationForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
@@ -40,14 +40,14 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        print("user is auth: ",user.is_authenticated)
-        print("we are here, we are waiting")
-        # next_page = request.args.get('next')
-        # # secures application by using urlsplit to disallow malicious urls
-        # if not next_page or urlsplit(next_page).netloc != '':
-        #     next_page = url_for('team_selection')
-        # return redirect(next_page)
-        return redirect(url_for('team_selection'))
+        if user.is_admin == false():
+            # next_page = request.args.get('next')
+            # # secures application by using urlsplit to disallow malicious urls
+            # if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('team_selection')
+            return redirect(next_page)
+        else:
+            return redirect(url_for('admin_landing_page'))
     return render_template('login.html', title='Sign In', form=form)
 @app.route('/logout')
 def logout():
@@ -80,6 +80,7 @@ def register():
     if form.validate_on_submit():
         user = Users(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.is_admin = false()
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
@@ -422,3 +423,7 @@ def comparePlayers():
     # If GET request, render the compare form
     return render_template("compare_form.html")
 
+@app.route('/admin-landing-page')
+@login_required
+def admin_landing_page():
+    return render_template("admin_index.html", title="Admin landing page")

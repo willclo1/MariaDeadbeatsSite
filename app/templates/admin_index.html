@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="icon">⚾</div>
+        {% if title %}
+            <h1>{{ title }} - Database Project</h1>
+        {% else %}
+            <h1>Welcome to Our Database Project</h1>
+        {% endif %}
+
+        <h2>Hi, {{ current_user.username }}!</h2>
+        <p class="instructions">Please navigate to the admin site of your choice:</p>
+
+        <div class="nav-links">
+            <a href="{{ url_for('team_selection') }}" class="back-button">Ban Users</a>
+            <a href="{{ url_for('team_selection') }}" class="back-button">Add Admin</a>
+
+        </div>
+    </div>
+{% endblock %}
