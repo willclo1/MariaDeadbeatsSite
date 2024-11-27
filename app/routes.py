@@ -1,11 +1,13 @@
 from flask_login import login_required, current_user, login_user, logout_user
 import sqlalchemy as sa
+from sqlalchemy.sql.functions import user
+
 from app import db
 from app import app
 from app.forms import LoginForm, RegistrationForm
-from flask import flash
+from flask import flash, abort
 from flask import render_template, request, redirect, url_for
-from sqlalchemy import create_engine, false
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
@@ -18,20 +20,26 @@ engine = create_engine(engineStr)
 # set a path so templates can be read with any file path
 templates_path = os.path.join(basedir, 'templates')
 
+
 @app.route('/home')
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
     # here is where we could query for interesting user info - cookies??
+    if not current_user.is_admin:
+        return render_template('index.html', title='Home Page')
+    else:
+        return render_template("admin_index.html", title="Admin landing page")
 
-    return render_template('index.html', title='Home Page')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('team_selection'))
+    if current_user.is_authenticated and not current_user.is_admin:
+        return redirect(url_for('index'))
+    elif current_user.is_authenticated and current_user.is_admin:
+        return redirect(url_for('admin_index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
@@ -40,14 +48,14 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        if user.is_admin == false():
-            # next_page = request.args.get('next')
-            # # secures application by using urlsplit to disallow malicious urls
-            # if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('team_selection')
+        if not user.is_admin:
+            next_page = request.args.get('next')
+            # secures application by using urlsplit to disallow malicious urls
+            if not next_page or urlsplit(next_page).netloc != '':
+                next_page = url_for('index')
             return redirect(next_page)
         else:
-            return redirect(url_for('admin_landing_page'))
+            return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 @app.route('/logout')
 def logout():
@@ -80,13 +88,26 @@ def register():
     if form.validate_on_submit():
         user = Users(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
-        user.is_admin = false()
+        user.is_admin = False
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+
+@app.route('/admin-register', methods=['GET', 'POST'])
+def admin_register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        admin = Users(username=form.username.data, email=form.email.data)
+        admin.set_password(form.password.data)
+        admin.is_admin = True
+        db.session.add(admin)
+        db.session.commit()
+        output_string = "New Admin User Created: " + admin.username
+        flash(output_string)
+    return render_template('admin_register.html', title='Register', form=form)
 
 @app.route('/year-selection', methods=['GET', 'POST'])
 @login_required
@@ -422,8 +443,3 @@ def comparePlayers():
 
     # If GET request, render the compare form
     return render_template("compare_form.html")
-
-@app.route('/admin-landing-page')
-@login_required
-def admin_landing_page():
-    return render_template("admin_index.html", title="Admin landing page")
