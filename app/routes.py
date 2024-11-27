@@ -435,7 +435,7 @@ def depth_chart():
         team_query = text("""
             SELECT teamID
             FROM teams
-            WHERE yearID = :year AND teamID = :team
+            WHERE yearID = :year AND team_name = :team
             LIMIT 1;
             """)
         result = connection.execute(team_query, {"year": year, "team": team}).mappings().first()
@@ -455,7 +455,7 @@ def depth_chart():
             FROM fielding f
             JOIN teams t ON f.teamID = t.teamID AND f.yearID = t.yearID
             JOIN people p ON f.playerID = p.playerID AND f.teamID = t.teamID
-            WHERE f.yearID = :year AND f.teamID = :team
+            WHERE f.yearID = :year AND f.teamID = :teamID
             ORDER BY f.position, games_played DESC;
                 """)
         depth_chart_result = connection.execute(depth_chart_query, {"year": year, "teamID": teamID}).mappings().all()
@@ -464,7 +464,7 @@ def depth_chart():
         for row in depth_chart_result:
             position = row["position"]
             player_info = {
-                "name": f"{row['nameFirst']} {row['nameLast']}",
+                "name": f"{row['first_name']} {row['last_name']}",
                 "games_played": row["games_played"],
                 "playing_time_percentage": row["playing_time_percentage"]
             }
