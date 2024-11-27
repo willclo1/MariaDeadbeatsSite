@@ -413,8 +413,6 @@ def comparePlayers():
                 WHERE p.nameFirst = :first AND p.nameLast = :last
                 GROUP BY p.playerID;
             """)
-
-            # Try to fetch provided player stats
             player1_stats = connection.execute(player_query, {"first": player1_first, "last": player1_last}).mappings().first() if 'player1_first' in locals() else None
             player2_stats = connection.execute(player_query, {"first": player2_first, "last": player2_last}).mappings().first() if 'player2_first' in locals() else None
 
@@ -429,11 +427,16 @@ def comparePlayers():
             player2_stats = dict(player2_stats) if player2_stats else None
 
             # Format averages
+            # Format averages and WAR
             if player1_stats and 'avg' in player1_stats and player1_stats['avg'] is not None:
                 player1_stats['avg'] = f"{player1_stats['avg']:.3f}"
             if player2_stats and 'avg' in player2_stats and player2_stats['avg'] is not None:
                 player2_stats['avg'] = f"{player2_stats['avg']:.3f}"
 
+            if player1_stats and 'total_war' in player1_stats and player1_stats['total_war'] is not None:
+                player1_stats['total_war'] = f"{player1_stats['total_war']:.3f}"
+            if player2_stats and 'total_war' in player2_stats and player2_stats['total_war'] is not None:
+                player2_stats['total_war'] = f"{player2_stats['total_war']:.3f}"
         return render_template(
             "compare.html",
             player1=player1_stats,
