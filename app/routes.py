@@ -1,17 +1,18 @@
 from flask_login import login_required, current_user, login_user, logout_user
 import sqlalchemy as sa
 from sqlalchemy.sql.functions import user
+from functools import wraps
 
 from app import db
 from app import app
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, BanUserForm
 from flask import flash, abort
 from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
-from app.models import Users
+from app.models import Users, BannedUsers
 from urllib.parse import urlsplit
 import os
 from cfg import basedir
@@ -95,8 +96,45 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+def admin_status_required():
+    def admin_status_decorator(func):
+        @wraps(func)
+        def admin_status_wrapper(*args, **kwargs):
+            if current_user.is_admin:
+                return func(*args, **kwargs)
+            else:
+                # Handle the case where the condition is not met
+                return "Admin Status is required", 403  # For example, return a 403 Forbidden
+        return admin_status_wrapper
+    return admin_status_decorator
+
+@app.route('/ban-user', methods=['GET', 'POST'])
+@login_required
+@admin_status_required()
+def ban_user():
+    form = BanUserForm()
+    print("not validating")
+    if form.validate_on_submit():
+        print("form validated!")
+        email = db.session.scalar(sa.select(Users.email).where(
+            Users.username == form.username.data))
+        banned_user = BannedUsers(username=form.username.data, email=email)
+        print("banning user: ")
+        print(form.username.data + " " +  email)
+        db.session.add(banned_user)
+        db.session.commit()
+        output_string = "User Banned: " + banned_user.username + " - email: " + banned_user.email
+        flash(output_string)
+    else:
+        print("form not validated")
+        print(form.errors)  # This will print the errors if any
+
+    return render_template('ban_user.html', title='Ban User', form=form)
+
 
 @app.route('/admin-register', methods=['GET', 'POST'])
+@login_required
+@admin_status_required()
 def admin_register():
     form = RegistrationForm()
     if form.validate_on_submit():

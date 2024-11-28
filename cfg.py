@@ -11,5 +11,5 @@ engineStr = "mysql+pymysql://" + cfg.get("user") + ":" + cfg.get("password") + "
 # configuration for database can config from class config to simplify configuration
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    DATABASE_URL = os.environ.get('DATABASE_URL') or "mysql+pymysql://willclore:password@localhost/MariaDeadbeats"
+    DATABASE_URL = os.environ.get('DATABASE_URL') or "mysql+pymysql://guest_user:guestPassword123@localhost/MariaDeadbeats"
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
