@@ -1,15 +1,17 @@
+from functools import wraps
+
 from flask_login import login_required, current_user, login_user, logout_user
 import sqlalchemy as sa
 from app import db
 from app import app
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, BanUserForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
-from app.models import Users
+from app.models import Users, BannedUsers
 from urllib.parse import urlsplit
 import os
 from cfg import basedir
