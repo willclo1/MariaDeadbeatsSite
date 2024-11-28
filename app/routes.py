@@ -555,6 +555,7 @@ def depth_chart():
     return render_template(
         'depth_chart.html',
         depth_chart=depth_chart,
+        diamond_positions=diamond_positions,
         team=team,
         year=year
     )
