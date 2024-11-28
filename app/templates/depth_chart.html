@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Depth Chart</title>
+</head>
+<body>
+    <h1>Depth Chart for {{ team }} ({{ year }})</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Player</th>
+                <th>Games Played</th>
+                <th>Playing Time (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for position, players in depth_chart.items() %}
+                <tr>
+                    <td rowspan="{{ players|length }}">{{ position }}</td>
+                    {% for player in players %}
+                        {% if not loop.first %}
+                        <tr>
+                        {% endif %}
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.games_played }}</td>
+                        <td>{{ player.playing_time_percentage }}</td>
+                        </tr>
+                    {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('summary', team=team, year=year) }}">Back to Summary</a>
+</body>
+</html>
+{% endblock %}
