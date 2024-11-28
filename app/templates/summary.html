@@ -20,6 +20,21 @@
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
+            .depth-chart-button {
+                display: block;
+                margin: 20px auto 40px auto;
+                padding: 15px 30px;
+                background-color: #007bff;
+                color: #fff;
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                border: none;
+                border-radius: 8px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
 
             .toggle-button:hover {
                 background-color: #0056b3;
@@ -30,7 +45,11 @@
         <div class="container">
             <h1>{{ summary.team }} - {{ summary.year }}</h1>
             <p class="instructions">A detailed overview of {{ summary.team }}'s performance in {{ summary.year }}.</p>
-
+            <div class="button-container">
+                <a href="{{ url_for('depth_chart', team=summary.team, year=summary.year) }}" class="depth-chart-button">
+                    View Depth Chart
+                </a>
+            </div>
             <div class="stats-section">
             <h2>Team Statistics</h2>
                 <div class="team-stats-cards">
@@ -193,7 +212,6 @@
                 <button id="toggle-pitching" class="toggle-button">Show More</button>
             </div>
             <a href="/" class="back-button">Back to Home</a>
-            <a href="depth_chart" class="back-button">Depth Chart</a>
         </div>
 
     <script>

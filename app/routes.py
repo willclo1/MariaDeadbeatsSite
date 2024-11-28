@@ -441,7 +441,7 @@ def depth_chart():
             FROM teams
             WHERE yearID = :year AND team_name = :team
             LIMIT 1;
-            """)
+        """)
         result = connection.execute(team_query, {"year": year, "team": team}).mappings().first()
         if not result:
             return f"Error: Team {team} not found for year {year}.", 404
@@ -461,9 +461,10 @@ def depth_chart():
             JOIN people p ON f.playerID = p.playerID AND f.teamID = t.teamID
             WHERE f.yearID = :year AND f.teamID = :teamID
             ORDER BY f.position, games_played DESC;
-                """)
+        """)
         depth_chart_result = connection.execute(depth_chart_query, {"year": year, "teamID": teamID}).mappings().all()
 
+        # Organize players into positions
         depth_chart = {}
         for row in depth_chart_result:
             position = row["position"]
@@ -476,15 +477,31 @@ def depth_chart():
                 depth_chart[position] = []
             depth_chart[position].append(player_info)
 
+        # Handle diamond positions
+        diamond_positions = {pos: None for pos in ["C", "P", "1B", "2B", "3B", "SS", "LF", "CF", "RF"]}
+        for pos in diamond_positions.keys():
+            if pos in depth_chart:
+                diamond_positions[pos] = depth_chart[pos][0]  # Assign the first player for each position
+
+        # Handle missing outfielders
+        if "LF" not in depth_chart or "CF" not in depth_chart or "RF" not in depth_chart:
+            if "OF" in depth_chart:
+                top_outfielders = sorted(depth_chart["OF"], key=lambda x: x["games_played"], reverse=True)[:3]
+                for idx, outfielder in enumerate(top_outfielders):
+                    if idx == 0 and "LF" not in depth_chart:
+                        diamond_positions["LF"] = outfielder
+                    elif idx == 1 and "CF" not in depth_chart:
+                        diamond_positions["CF"] = outfielder
+                    elif idx == 2 and "RF" not in depth_chart:
+                        diamond_positions["RF"] = outfielder
+
     return render_template(
         'depth_chart.html',
         depth_chart=depth_chart,
+        diamond_positions=diamond_positions,
         team=team,
         year=year
     )
-
-
-
 @app.route('/admin-landing-page')
 @login_required
 def admin_landing_page():
