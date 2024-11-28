@@ -2,31 +2,30 @@
 
 {% block content %}
     <style>
-        /* Container Styling */
         .container {
             background: #fff;
             color: #333;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            width: 100%;
+            width: 90%;
             max-width: 400px;
+            margin: 20px auto;
             text-align: center;
-            margin: 20px auto; /* Center the form */
         }
 
-        /* Form Labels */
-        .form-label {
+        label {
             font-size: 14px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             display: block;
-            color: #555;
             text-align: left;
+            color: #555;
         }
 
-        /* Form Inputs */
-        .form-input {
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -35,21 +34,15 @@
             font-size: 14px;
         }
 
-        /* Checkbox */
-        .form-checkbox {
-            margin-right: 10px;
-        }
-
-        /* Form Errors */
         .form-error {
             color: red;
             font-size: 12px;
+            margin-bottom: 10px;
             text-align: left;
             display: block;
         }
 
-        /* Submit Button */
-        .form-button {
+        button[type="submit"] {
             background-color: #007bff;
             color: white;
             border: none;
@@ -59,56 +52,57 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
             width: 100%;
+            display: block;
+            text-align: center;
         }
 
-        .form-button:hover {
+        button[type="submit"]:hover {
             background-color: #0056b3;
             transform: scale(1.02);
         }
 
-        /* Registration Link */
-        .register-link {
+        h1 {
             color: #007bff;
-            text-decoration: none;
-        }
-
-        .register-link:hover {
-            text-decoration: underline;
-            color: #0056b3;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
     </style>
 
     <div class="container">
-        <h1>Sign In</h1>
-        <form action="" method="post" novalidate>
+        <h1>Register</h1>
+        <form action="" method="post">
             {{ form.hidden_tag() }}
-
-            <!-- Username Input -->
-            <!-- Username Input -->
             <div class="form-group">
-                {{ form.username.label(class_="form-label") }}
-                {{ form.username(class_="form-input", size=32) }}
+                {{ form.username.label }}
+                {{ form.username(size=32) }}
                 {% for error in form.username.errors %}
                     <span class="form-error">[{{ error }}]</span>
                 {% endfor %}
             </div>
-
-            <!-- Password Input -->
             <div class="form-group">
-                {{ form.password.label(class_="form-label") }}
-                {{ form.password(class_="form-input", size=32) }}
+                {{ form.email.label }}
+                {{ form.email(size=64) }}
+                {% for error in form.email.errors %}
+                    <span class="form-error">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(size=32) }}
                 {% for error in form.password.errors %}
                     <span class="form-error">[{{ error }}]</span>
                 {% endfor %}
             </div>
-
-            <!-- Submit Button -->
             <div class="form-group">
-                {{ form.submit(class_="form-button") }}
+                {{ form.password2.label }}
+                {{ form.password2(size=32) }}
+                {% for error in form.password2.errors %}
+                    <span class="form-error">[{{ error }}]</span>
+                {% endfor %}
             </div>
+            <button type="submit">{{ form.submit.label.text }}</button>
         </form>
+        </div>
 
-        <!-- Registration Link -->
-        <p>New User? <a href="{{ url_for('register') }}" class="register-link">Click to Register!</a></p>
-    </div>
+
 {% endblock %}

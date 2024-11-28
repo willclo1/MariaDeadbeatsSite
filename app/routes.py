@@ -24,14 +24,19 @@ templates_path = os.path.join(basedir, 'templates')
 @login_required
 def index():
     # here is where we could query for interesting user info - cookies??
+    if not current_user.is_admin:
+        return render_template('index.html', title='Home Page')
+    else:
+        return render_template("admin_index.html", title="Admin landing page")
 
-    return render_template('index.html', title='Home Page')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('team_selection'))
+    if current_user.is_authenticated and not current_user.is_admin:
+        return redirect(url_for('index'))
+    elif current_user.is_authenticated and current_user.is_admin:
+        return redirect(url_for('admin_index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
@@ -40,14 +45,14 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        if user.is_admin == false():
-            # next_page = request.args.get('next')
-            # # secures application by using urlsplit to disallow malicious urls
-            # if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('team_selection')
+        if not user.is_admin:
+            next_page = request.args.get('next')
+            # secures application by using urlsplit to disallow malicious urls
+            if not next_page or urlsplit(next_page).netloc != '':
+                next_page = url_for('index')
             return redirect(next_page)
         else:
-            return redirect(url_for('admin_landing_page'))
+            return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 @app.route('/logout')
 def logout():
@@ -80,13 +85,63 @@ def register():
     if form.validate_on_submit():
         user = Users(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
-        user.is_admin = false()
+        user.is_admin = False
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+def admin_status_required():
+    def admin_status_decorator(func):
+        @wraps(func)
+        def admin_status_wrapper(*args, **kwargs):
+            if current_user.is_admin:
+                return func(*args, **kwargs)
+            else:
+                # Handle the case where the condition is not met
+                return "Admin Status is required", 403  # For example, return a 403 Forbidden
+        return admin_status_wrapper
+    return admin_status_decorator
+
+@app.route('/ban-user', methods=['GET', 'POST'])
+@login_required
+@admin_status_required()
+def ban_user():
+    form = BanUserForm()
+    print("not validating")
+    if form.validate_on_submit():
+        print("form validated!")
+        email = db.session.scalar(sa.select(Users.email).where(
+            Users.username == form.username.data))
+        banned_user = BannedUsers(username=form.username.data, email=email)
+        print("banning user: ")
+        print(form.username.data + " " +  email)
+        db.session.add(banned_user)
+        db.session.commit()
+        output_string = "User Banned: " + banned_user.username + " - email: " + banned_user.email
+        flash(output_string)
+    else:
+        print("form not validated")
+        print(form.errors)  # This will print the errors if any
+
+    return render_template('ban_user.html', title='Ban User', form=form)
+
+
+@app.route('/admin-register', methods=['GET', 'POST'])
+@login_required
+@admin_status_required()
+def admin_register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        admin = Users(username=form.username.data, email=form.email.data)
+        admin.set_password(form.password.data)
+        admin.is_admin = True
+        db.session.add(admin)
+        db.session.commit()
+        output_string = "New Admin User Created: " + admin.username
+        flash(output_string)
+    return render_template('admin_register.html', title='Register', form=form)
 
 @app.route('/year-selection', methods=['GET', 'POST'])
 @login_required
@@ -441,7 +496,7 @@ def depth_chart():
             FROM teams
             WHERE yearID = :year AND team_name = :team
             LIMIT 1;
-        """)
+            """)
         result = connection.execute(team_query, {"year": year, "team": team}).mappings().first()
         if not result:
             return f"Error: Team {team} not found for year {year}.", 404
@@ -461,10 +516,9 @@ def depth_chart():
             JOIN people p ON f.playerID = p.playerID AND f.teamID = t.teamID
             WHERE f.yearID = :year AND f.teamID = :teamID
             ORDER BY f.position, games_played DESC;
-        """)
+                """)
         depth_chart_result = connection.execute(depth_chart_query, {"year": year, "teamID": teamID}).mappings().all()
 
-        # Organize players into positions
         depth_chart = {}
         for row in depth_chart_result:
             position = row["position"]
@@ -498,10 +552,12 @@ def depth_chart():
     return render_template(
         'depth_chart.html',
         depth_chart=depth_chart,
-        diamond_positions=diamond_positions,
         team=team,
         year=year
     )
+
+
+
 @app.route('/admin-landing-page')
 @login_required
 def admin_landing_page():
