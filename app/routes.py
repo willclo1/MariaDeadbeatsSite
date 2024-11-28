@@ -5,7 +5,7 @@ from app import app
 from app.forms import LoginForm, RegistrationForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
@@ -40,14 +40,14 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        print("user is auth: ",user.is_authenticated)
-        print("we are here, we are waiting")
-        # next_page = request.args.get('next')
-        # # secures application by using urlsplit to disallow malicious urls
-        # if not next_page or urlsplit(next_page).netloc != '':
-        #     next_page = url_for('team_selection')
-        # return redirect(next_page)
-        return redirect(url_for('team_selection'))
+        if user.is_admin == false():
+            # next_page = request.args.get('next')
+            # # secures application by using urlsplit to disallow malicious urls
+            # if not next_page or urlsplit(next_page).netloc != '':
+            next_page = url_for('team_selection')
+            return redirect(next_page)
+        else:
+            return redirect(url_for('admin_landing_page'))
     return render_template('login.html', title='Sign In', form=form)
 @app.route('/logout')
 def logout():
@@ -80,6 +80,7 @@ def register():
     if form.validate_on_submit():
         user = Users(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.is_admin = false()
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
@@ -391,8 +392,6 @@ def comparePlayers():
                 WHERE p.nameFirst = :first AND p.nameLast = :last
                 GROUP BY p.playerID;
             """)
-
-            # Try to fetch provided player stats
             player1_stats = connection.execute(player_query, {"first": player1_first, "last": player1_last}).mappings().first() if 'player1_first' in locals() else None
             player2_stats = connection.execute(player_query, {"first": player2_first, "last": player2_last}).mappings().first() if 'player2_first' in locals() else None
 
@@ -407,11 +406,16 @@ def comparePlayers():
             player2_stats = dict(player2_stats) if player2_stats else None
 
             # Format averages
+            # Format averages and WAR
             if player1_stats and 'avg' in player1_stats and player1_stats['avg'] is not None:
                 player1_stats['avg'] = f"{player1_stats['avg']:.3f}"
             if player2_stats and 'avg' in player2_stats and player2_stats['avg'] is not None:
                 player2_stats['avg'] = f"{player2_stats['avg']:.3f}"
 
+            if player1_stats and 'total_war' in player1_stats and player1_stats['total_war'] is not None:
+                player1_stats['total_war'] = f"{player1_stats['total_war']:.3f}"
+            if player2_stats and 'total_war' in player2_stats and player2_stats['total_war'] is not None:
+                player2_stats['total_war'] = f"{player2_stats['total_war']:.3f}"
         return render_template(
             "compare.html",
             player1=player1_stats,
@@ -481,3 +485,7 @@ def depth_chart():
 
 
 
+@app.route('/admin-landing-page')
+@login_required
+def admin_landing_page():
+    return render_template("admin_index.html", title="Admin landing page")
