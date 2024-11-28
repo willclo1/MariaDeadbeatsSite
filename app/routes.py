@@ -20,6 +20,8 @@ engine = create_engine(engineStr)
 # set a path so templates can be read with any file path
 templates_path = os.path.join(basedir, 'templates')
 
+
+
 @app.route('/home')
 @app.route('/')
 @app.route('/index')
@@ -49,7 +51,6 @@ def login():
         login_user(user, remember=form.remember_me.data)
         if not user.is_admin:
             next_page = request.args.get('next')
-            # secures application by using urlsplit to disallow malicious urls
             if not next_page or urlsplit(next_page).netloc != '':
                 next_page = url_for('index')
             return redirect(next_page)

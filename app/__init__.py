@@ -14,6 +14,7 @@ db = SQLAlchemy(app)
 # app.permanent_session_lifetime = timedelta(minutes=30)
 
 login = LoginManager(app)
+login.login_message = None
 login.login_view = 'login'
 
 
