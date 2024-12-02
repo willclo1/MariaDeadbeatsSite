@@ -22,7 +22,6 @@
             text-align: left;
             color: #555;
         }
-
         input[type="text"],
         input[type="email"],
         input[type="password"] {
@@ -67,20 +66,50 @@
             font-size: 24px;
         }
     </style>
-
-    <div class="container">
+<div style="display: flex; justify-content: space-between; gap: 20px;">
+    <div class="container" style="flex: 1;">
         <h1>Input the username for the user you wish to ban.</h1>
         <form action="" method="POST">
-            {{ form.hidden_tag() }}
+            {{ BanForm.hidden_tag() }}
             <div class="form-group">
-                {{ form.username.label }}
-                {{ form.username(size=32) }}
-                {% for error in form.username.errors %}
+                {{ BanForm.username.label }}
+                {{ BanForm.username(size=32) }}
+                {% for error in BanForm.username.errors %}
                     <span class="form-error">[{{ error }}]</span>
                 {% endfor %}
             </div>
-            <button type="submit">{{ form.submit.label.text }}</button>
+            <button type="submit" name="ban_submit">{{ BanForm.submit.label.text }}</button>
         </form>
         </div>
+        <div class="container" style="flex: 1;">
+        <h1>Input the username for the user you wish to unban.</h1>
+        <form action="" method="POST">
+            {{ UnbanForm.hidden_tag() }}
+            <div class="form-group">
+                {{ UnbanForm.username.label }}
+                {{ UnbanForm.username(size=32) }}
+                {% for error in UnbanForm.username.errors %}
+                    <span class="form-error">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <button type="submit" name="unban_submit">{{ UnbanForm.submit.label.text }}</button>
+        </form>
+        </div>
+    <div class="container">
+    <table>
+          <tr>
+              BANNED USERS
+            <th>Username</th>
+            <th>Email</th>
+          </tr>
+          {%for BannedUser in BannedUsers%}
+          <tr>
+            <td>{{BannedUser['username']}}</td>
+            <td>{{BannedUser['email']}}</td>
+          </tr>
+          {%endfor%}
+        </table>
+    </div>
+</div>
 
 {% endblock %}
