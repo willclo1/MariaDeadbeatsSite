@@ -96,18 +96,17 @@
         <a href="/" class="back-button">Back to Home</a>
     </div>
     <script>
-        // Initialize Leaflet map
-        const map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on the US
+        const map = L.map('map', {
+            maxBoundsViscosity: 1.0
+            }).setView([39.8283, -98.5795], 4)
 
-        // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Add markers for parks
         const parks = {{ parks|tojson }};
         const markers = [];
+
 
         parks.forEach(park => {
             if (park.latitude && park.longitude) {
@@ -124,11 +123,8 @@
             );
 
             if (filteredMarkers.length > 0) {
-                // Focus on the first result
                 const { latitude, longitude } = filteredMarkers[0].data;
                 map.setView([latitude, longitude], 10);
-
-                // Open popups for all matching parks
                 filteredMarkers.forEach(({ marker }) => marker.openPopup());
             } else {
                 alert('No parks found for your search query.');
