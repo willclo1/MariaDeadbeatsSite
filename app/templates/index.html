@@ -19,12 +19,16 @@
                 <li>
                     <strong>Compare Batter Stats:</strong> Analyze and compare the batting statistics of two players, including hits, home runs, RBIs, averages, and WAR (Wins Above Replacement).
                 </li>
+                <li>
+                    <strong>View Parks:</strong> Explore the locations of parks on an interactive map.
+                </li>
             </ul>
         </div>
 
         <div class="nav-links">
             <a href="{{ url_for('team_selection') }}" class="back-button">Team Summary</a>
             <a href="{{ url_for('comparePlayers') }}" class="back-button">Compare Batters</a>
+            <a href="{{ url_for('view_parks') }}" class="back-button">View Parks</a>
         </div>
     </div>
 {% endblock %}

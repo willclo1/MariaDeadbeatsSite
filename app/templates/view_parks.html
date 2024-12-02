@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Parks</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        #map {
+            height: 70vh;
+            width: 90%;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .search-input {
+            padding: 10px;
+            font-size: 1em;
+            width: 300px;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+        }
+
+        .search-button {
+            padding: 10px 15px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Explore Parks</h1>
+    <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="Search by name">
+        <button onclick="searchParks()" class="search-button">Search</button>
+    </div>
+    <div id="map"></div>
+    <div class="back-button-container">
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+    <script>
+        // Initialize Leaflet map
+        const map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on the US
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add markers for parks
+        const parks = {{ parks|tojson }};
+        const markers = [];
+
+        parks.forEach(park => {
+            if (park.latitude && park.longitude) {
+                const marker = L.marker([park.latitude, park.longitude])
+                    .addTo(map)
+                    .bindPopup(`<strong>${park.park_name}</strong><br>${park.city}, ${park.state}`);
+                markers.push({ marker, data: park });
+            }
+        });
+        function searchParks() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const filteredMarkers = markers.filter(({ data }) =>
+                data.park_name && data.park_name.toLowerCase().includes(query)
+            );
+
+            if (filteredMarkers.length > 0) {
+                // Focus on the first result
+                const { latitude, longitude } = filteredMarkers[0].data;
+                map.setView([latitude, longitude], 10);
+
+                // Open popups for all matching parks
+                filteredMarkers.forEach(({ marker }) => marker.openPopup());
+            } else {
+                alert('No parks found for your search query.');
+            }
+        }
+    </script>
+</body>
+</html>

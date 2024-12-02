@@ -559,8 +559,18 @@ def depth_chart():
         year=year
     )
 
+@app.route("/viewParks")
+@login_required
+def view_parks():
+    try:
+        # Connect to the database and fetch parks data
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT parkID, park_name, city, state, country, latitude, longitude FROM parks"))
+            parks = [dict(row) for row in result.mappings()]  # Use .mappings() to get dictionary-like rows
 
-
+        return render_template("view_parks.html", parks=parks)
+    except Exception as e:
+        return f"An error occurred: {e}", 500
 @app.route('/admin-landing-page')
 @login_required
 def admin_landing_page():
