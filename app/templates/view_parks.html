@@ -113,20 +113,16 @@
         <a href="/" class="back-button">Back to Home</a>
     </div>
     <script>
-        // Initialize the map
         const map = L.map('map', {
             maxBoundsViscosity: 1.0
         }).setView([39.8283, -98.5795], 4);
 
-        // Add the tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
         }).addTo(map);
 
-        // Initialize Marker Cluster Group
         const markersCluster = L.markerClusterGroup();
 
-        // Add markers to the cluster group
         const parks = {{ parks|tojson }};
         const markers = [];
 
@@ -142,14 +138,12 @@
                         </a>
                     `);
                 markers.push({ marker, data: park });
-                markersCluster.addLayer(marker); // Add each marker to the cluster group
+                markersCluster.addLayer(marker);
             }
         });
 
-        // Add the cluster group to the map
         map.addLayer(markersCluster);
 
-        // Search functionality remains the same
         function searchParks() {
             const query = document.getElementById('search').value.toLowerCase();
             const filteredMarkers = markers.filter(({ data }) =>
