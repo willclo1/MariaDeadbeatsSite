@@ -14,20 +14,17 @@
             <p>Welcome to our baseball database project! Here's what you can do:</p>
             <ul>
                 <li>
-                    <strong>Team Summary:</strong> View a comprehensive overview of baseball teams for a given year with things such as player and team stats.
+                    <strong>Team Summary:</strong> View a comprehensive overview of baseball teams for a given year with things such as player and team stats and a depth chart.
                 </li>
                 <li>
                     <strong>Compare Batter Stats:</strong> Analyze and compare the batting statistics of two players, including hits, home runs, RBIs, averages, and WAR (Wins Above Replacement).
-                </li>
-                <li>
-                    <strong>Depth Chart:</strong> Explore a detailed depth chart for teams, showcasing player positions and team lineups.
                 </li>
             </ul>
         </div>
 
         <div class="nav-links">
             <a href="{{ url_for('team_selection') }}" class="back-button">Team Summary</a>
-            <a href="{{ url_for('comparePlayers') }}" class="back-button">Comparing Players</a>
+            <a href="{{ url_for('comparePlayers') }}" class="back-button">Compare Batters</a>
         </div>
     </div>
 {% endblock %}

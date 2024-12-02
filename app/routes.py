@@ -1,14 +1,15 @@
-from flask_login import login_required, current_user, login_user, logout_user
-import sqlalchemy as sa
-from sqlalchemy.sql.functions import user
 from functools import wraps
 
+from flask_login import login_required, current_user, login_user, logout_user
+import sqlalchemy as sa
 from app import db
 from app import app
 from app.forms import LoginForm, RegistrationForm, BanUserForm, UnbanUserForm
 from flask import flash, abort
+from app.forms import LoginForm, RegistrationForm, BanUserForm
+from flask import flash
 from flask import render_template, request, redirect, url_for
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
@@ -20,6 +21,7 @@ from cfg import basedir
 engine = create_engine(engineStr)
 # set a path so templates can be read with any file path
 templates_path = os.path.join(basedir, 'templates')
+
 
 
 @app.route('/home')
@@ -51,7 +53,6 @@ def login():
         login_user(user, remember=form.remember_me.data)
         if not user.is_admin:
             next_page = request.args.get('next')
-            # secures application by using urlsplit to disallow malicious urls
             if not next_page or urlsplit(next_page).netloc != '':
                 next_page = url_for('index')
             return redirect(next_page)
@@ -496,6 +497,7 @@ def comparePlayers():
 
     # If GET request, render the compare form
     return render_template("compare_form.html")
+
 @app.route('/depth_chart', methods=['GET'])
 @login_required
 def depth_chart():
@@ -546,9 +548,35 @@ def depth_chart():
                 depth_chart[position] = []
             depth_chart[position].append(player_info)
 
+        # Handle diamond positions
+        diamond_positions = {pos: None for pos in ["C", "P", "1B", "2B", "3B", "SS", "LF", "CF", "RF"]}
+        for pos in diamond_positions.keys():
+            if pos in depth_chart:
+                diamond_positions[pos] = depth_chart[pos][0]  # Assign the first player for each position
+
+        # Handle missing outfielders
+        if "LF" not in depth_chart or "CF" not in depth_chart or "RF" not in depth_chart:
+            if "OF" in depth_chart:
+                top_outfielders = sorted(depth_chart["OF"], key=lambda x: x["games_played"], reverse=True)[:3]
+                for idx, outfielder in enumerate(top_outfielders):
+                    if idx == 0 and "LF" not in depth_chart:
+                        diamond_positions["LF"] = outfielder
+                    elif idx == 1 and "CF" not in depth_chart:
+                        diamond_positions["CF"] = outfielder
+                    elif idx == 2 and "RF" not in depth_chart:
+                        diamond_positions["RF"] = outfielder
+
     return render_template(
         'depth_chart.html',
         depth_chart=depth_chart,
+        diamond_positions=diamond_positions,
         team=team,
         year=year
     )
+
+
+
+@app.route('/admin-landing-page')
+@login_required
+def admin_landing_page():
+    return render_template("admin_index.html", title="Admin landing page")
