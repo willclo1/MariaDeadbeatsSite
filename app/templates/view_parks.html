@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <style>
         body {
@@ -83,6 +86,17 @@
         .back-button:hover {
             background-color: #0056b3;
         }
+
+        .note {
+            text-align: center;
+            font-size: 0.9em;
+            color: #fff;
+            margin: 10px auto;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -92,30 +106,50 @@
         <button onclick="searchParks()" class="search-button">Search</button>
     </div>
     <div id="map"></div>
+    <div class="note">
+        Note: This map displays historical data. Some stadiums may no longer exist, and their locations are either approximate or represent nearby landmarks honoring them.
+    </div>
     <div class="back-button-container">
         <a href="/" class="back-button">Back to Home</a>
     </div>
     <script>
+        // Initialize the map
         const map = L.map('map', {
             maxBoundsViscosity: 1.0
-            }).setView([39.8283, -98.5795], 4)
+        }).setView([39.8283, -98.5795], 4);
 
+        // Add the tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
         }).addTo(map);
 
+        // Initialize Marker Cluster Group
+        const markersCluster = L.markerClusterGroup();
+
+        // Add markers to the cluster group
         const parks = {{ parks|tojson }};
         const markers = [];
 
-
         parks.forEach(park => {
             if (park.latitude && park.longitude) {
+                const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${park.latitude},${park.longitude}`;
                 const marker = L.marker([park.latitude, park.longitude])
-                    .addTo(map)
-                    .bindPopup(`<strong>${park.park_name}</strong><br>${park.city}, ${park.state}`);
+                    .bindPopup(`
+                        <strong>${park.park_name}</strong><br>
+                        ${park.city}, ${park.state}<br>
+                        <a href="${streetViewUrl}" target="_blank" style="color: #007BFF; text-decoration: none;">
+                            View in Street View
+                        </a>
+                    `);
                 markers.push({ marker, data: park });
+                markersCluster.addLayer(marker); // Add each marker to the cluster group
             }
         });
+
+        // Add the cluster group to the map
+        map.addLayer(markersCluster);
+
+        // Search functionality remains the same
         function searchParks() {
             const query = document.getElementById('search').value.toLowerCase();
             const filteredMarkers = markers.filter(({ data }) =>
