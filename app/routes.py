@@ -4,6 +4,8 @@ from flask_login import login_required, current_user, login_user, logout_user
 import sqlalchemy as sa
 from app import db
 from app import app
+from app.forms import LoginForm, RegistrationForm, BanUserForm, UnbanUserForm
+from flask import flash, abort
 from app.forms import LoginForm, RegistrationForm, BanUserForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
@@ -111,24 +113,36 @@ def admin_status_required():
 @login_required
 @admin_status_required()
 def ban_user():
-    form = BanUserForm()
-    print("not validating")
-    if form.validate_on_submit():
-        print("form validated!")
+    ban_form = BanUserForm()
+    unban_form = UnbanUserForm()
+    if 'ban_submit' in request.form and ban_form.validate_on_submit():
+        print("ban form validated!")
         email = db.session.scalar(sa.select(Users.email).where(
-            Users.username == form.username.data))
-        banned_user = BannedUsers(username=form.username.data, email=email)
+            Users.username == ban_form.username.data))
+        banned_user = BannedUsers(username=ban_form.username.data, email=email)
         print("banning user: ")
-        print(form.username.data + " " +  email)
+        print(ban_form.username.data + " " +  email)
         db.session.add(banned_user)
         db.session.commit()
         output_string = "User Banned: " + banned_user.username + " - email: " + banned_user.email
         flash(output_string)
+    elif 'unban_submit' in request.form and unban_form.validate_on_submit():
+        print("unban form validated!")
+        print("unbanning user: ", unban_form.username.data)
+        unbanned_user = BannedUsers.query.filter_by(username=unban_form.username.data).scalar()
+        db.session.delete(unbanned_user)
+        db.session.commit()
+        output_string = "Unbanned User: " + unbanned_user.username + " - email: " + unbanned_user.email
+        flash(output_string)
     else:
         print("form not validated")
-        print(form.errors)  # This will print the errors if any
+        print(ban_form.errors)  # This will print the errors if any
+        print(unban_form.errors)  # This will print the errors if any
 
-    return render_template('ban_user.html', title='Ban User', form=form)
+    banned_users = BannedUsers.query.all()
+    return render_template('ban_user.html', title='Ban User',
+                           BanForm=ban_form, UnbanForm=unban_form,BannedUsers = banned_users)
+
 
 
 @app.route('/admin-register', methods=['GET', 'POST'])
@@ -555,6 +569,7 @@ def depth_chart():
     return render_template(
         'depth_chart.html',
         depth_chart=depth_chart,
+        diamond_positions=diamond_positions,
         team=team,
         year=year
     )

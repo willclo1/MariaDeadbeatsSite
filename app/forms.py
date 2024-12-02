@@ -50,8 +50,25 @@ class BanUserForm(FlaskForm):
     submit = SubmitField('Ban')
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(Users).where(
+        unknown_user_test = db.session.scalar(sa.select(Users).where(
             Users.username == username.data))
-        if user is None:
+        if unknown_user_test is None:
             raise ValidationError('Please use a different username.')
+        banned_user_test = db.session.scalar(sa.select(BannedUsers).where(
+            BannedUsers.username == username.data))
+        if banned_user_test is not None:
+            raise ValidationError('This user is already banned!')
 
+class UnbanUserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('unban')
+
+    def validate_username(self, username):
+        unknown_user_test = db.session.scalar(sa.select(BannedUsers).where(
+            Users.username == username.data))
+        if unknown_user_test is None:
+            raise ValidationError('Please use a different username.')
+        not_banned_user_test = db.session.scalar(sa.select(BannedUsers).where(
+            BannedUsers.username == username.data))
+        if not_banned_user_test is None:
+            raise ValidationError('This user is not banned!')
