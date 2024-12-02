@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Immaculate Grid Solver</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Page Title */
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Puzzle Number Display */
+        #puzzle-number-display {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styles */
+        #puzzle-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            color: #fff;
+            background-color: #007bff;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Error Message */
+        #error-message {
+            color: #ffdddd;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styles */
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            width: 80%;
+            max-width: 600px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+            color: #333;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f2f2f2;
+        }
+
+        td:hover {
+            background-color: #cce5ff;
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Immaculate Grid Solver</h1>
+    <div id="puzzle-number-display">
+        {% if latest_puzzle_number %}
+            <p>Current Puzzle Number: {{ puzzle_number or latest_puzzle_number }}</p>
+        {% endif %}
+    </div>
+    <form method="post" id="puzzle-input">
+        <label for="puzzle_number">Enter Puzzle Number:</label>
+        <input type="number" id="puzzle_number" name="puzzle_number" min="1" placeholder="Current Day's Puzzle" value="{{ puzzle_number or '' }}">
+        <button type="submit" name="action" value="load_puzzle" id="load-button">Load Puzzle</button>
+        <button type="submit" name="action" value="solve_puzzle" id="solve-button">Solve Puzzle</button>
+    </form>
+
+    {% if top_row and left_column %}
+    <table>
+        <tr>
+            <th></th>
+            {% for col_value in top_row %}
+            <th>{{ col_value }}</th>
+            {% endfor %}
+        </tr>
+        {% for row_value in left_column %}
+        {% set row_index = loop.index0 %}
+        <tr>
+            <th>{{ row_value }}</th>
+            {% for col_index in range(0, top_row|length) %}
+            <td>
+                {% if grid %}
+                    {% if grid[row_index][col_index] == "No Match" %}
+                        No Match
+                    {% else %}
+                        {{ grid[row_index][col_index][0] }}<br>
+                        <small>{{ grid[row_index][col_index][1] }}</small>
+                    {% endif %}
+                {% else %}
+                    <!-- Empty cell -->
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    {% if error_message %}
+    <p id="error-message">{{ error_message }}</p>
+    {% endif %}
+    <div class="back-button-container">
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+</body>
+</html>

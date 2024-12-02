@@ -16,6 +16,7 @@ from cfg import engineStr
 from app.models import Users, BannedUsers
 from urllib.parse import urlsplit
 import os
+from app.utils import *
 from cfg import basedir
 
 engine = create_engine(engineStr)
@@ -590,3 +591,55 @@ def view_parks():
 @login_required
 def admin_landing_page():
     return render_template("admin_index.html", title="Admin landing page")
+
+@app.route('/grid-solver', methods=['GET', 'POST'])
+@login_required
+def grid_solver():
+    """
+    Load and solve the grid puzzle. By default, load the current day's puzzle.
+    """
+    puzzle_number = None  # Default to the current day's puzzle
+
+    if request.method == 'POST':
+        # Get the puzzle number from the form input, if provided
+        puzzle_number = request.form.get('puzzle_number')
+        if puzzle_number:
+            try:
+                puzzle_number = int(puzzle_number)
+            except ValueError:
+                puzzle_number = None  # Fallback to the current day's puzzle
+
+        action = request.form.get('action')
+
+        if action == 'solve_puzzle':
+            # Solve the puzzle
+            top_row, left_column, grid = solve_puzzle(puzzle_number)
+            return render_template(
+                'gridSolver.html',
+                puzzle_number=puzzle_number,
+                top_row=top_row,
+                left_column=left_column,
+                grid=grid
+            )
+        elif action == 'load_puzzle':
+            # Load a specific puzzle
+            top_row, left_column = scrape_immaculate_grid(puzzle_number)
+            grid = [["" for _ in range(3)] for _ in range(3)]
+            return render_template(
+                'gridSolver.html',
+                puzzle_number=puzzle_number,
+                top_row=top_row,
+                left_column=left_column,
+                grid=grid
+            )
+    else:
+        # GET request, load the current day's puzzle
+        top_row, left_column = scrape_immaculate_grid()
+        grid = [["" for _ in range(3)] for _ in range(3)]
+        return render_template(
+            'gridSolver.html',
+            puzzle_number=None,
+            top_row=top_row,
+            left_column=left_column,
+            grid=grid
+        )
