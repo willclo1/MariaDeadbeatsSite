@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,29 +65,30 @@
         .search-button:hover {
             background-color: #0056b3;
         }
-
         .back-button-container {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px; /* Increased margin for better spacing */
+            padding-bottom: 20px; /* Add padding to prevent crowding */
         }
 
-        .back-button {
-            display: inline-block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    .back-button {
+        display: inline-block;
+        margin: 20px auto;
+        padding: 12px 24px; /* Larger padding for easier clicking */
+        background-color: #0056b3; /* Darker blue for contrast */
+        color: #fff;
+        text-align: center;
+        border-radius: 8px; /* Increased rounding for a more modern look */
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow for better visibility */
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+    }
 
-        .back-button:hover {
-            background-color: #0056b3;
-        }
-
+    .back-button:hover {
+        background-color: #003d7a; /* Darker blue on hover */
+        transform: translateY(-2px); /* Slight lift on hover */
+    }
         .note {
             text-align: center;
             font-size: 0.9em;
@@ -105,10 +107,12 @@
         <input type="text" id="search" class="search-input" placeholder="Search by name">
         <button onclick="searchParks()" class="search-button">Search</button>
     </div>
-    <div id="map"></div>
     <div class="note">
-        Note: This map displays historical data. Some stadiums may no longer exist, and their locations are either approximate or represent nearby landmarks honoring them.
+        Note: This map displays historical data. Some stadiums may no longer exist, and their
+        locations may be incorrect or represent nearby landmarks honoring them. Please email willclore@yahoo.com
+        for inaccuracies
     </div>
+    <div id="map"></div>
     <div class="back-button-container">
         <a href="/" class="back-button">Back to Home</a>
     </div>
