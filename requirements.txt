@@ -28,4 +28,7 @@ tzdata==2023.3
 Werkzeug==2.3.7
 WTForms==3.0.1
 python-dotenv
-requests>=2.0.0
+requests==2.31.0
+urllib3==2.1.0
+html5lib==1.1
+beautifulsoup4==4.12.2
