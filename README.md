@@ -29,8 +29,9 @@
      ```sql
      source C:\\path\\to\\baseball.sql;
      ```
-6. Set up a virtual environment and install requirements:
+6. Set up a virtual environment and install requirements in the project directory:
    ```bash
+   cd MariaDeadbeats
    python -m venv project_env
    source project_env/bin/activate  # macOS/Linux
    project_env\Scripts\activate    # Windows
