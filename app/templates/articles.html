@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLB News | ESPN Headlines</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            background: #fff;
+            color: #333;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 32px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .instructions {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+            background: #e9f7fc;
+            border-left: 6px solid #007bff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ffffff, #f7f7f7);
+            margin: 1rem auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            max-width: 800px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #c41e3a;
+            margin-bottom: 10px;
+        }
+
+        .card-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card-title a:hover {
+            text-decoration: underline;
+        }
+
+        .card-content {
+            font-size: 14px;
+            color: #555;
+            text-align: left;
+        }
+
+        .card-content p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>ESPN MLB News</h1>
+        <section class="instructions">
+            <p>Welcome to the ESPN MLB News page! Here, you'll find the latest headlines and updates from Major League Baseball. Click on any headline to read the full article on ESPN's official website.</p>
+        </section>
+        {% for article in articles %}
+            <div class="card">
+                <div class="card-title">
+                    <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
+                </div>
+                <div class="card-content">
+                    <p>Catch up on the latest updates and insights from MLB. Click above to learn more!</p>
+                </div>
+            </div>
+        {% endfor %}
+    </main>
+</body>
+</html>

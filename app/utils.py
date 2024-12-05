@@ -1,7 +1,34 @@
-import requests
-from bs4 import BeautifulSoup
 import pymysql
 from cfg import cfg
+
+import requests
+from bs4 import BeautifulSoup
+
+
+def scrape_espn_mlb_news():
+    url = "https://www.espn.com/mlb/"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        print(f"Failed to retrieve the page. Status code: {response.status_code}")
+        return []
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    articles = []
+    for item in soup.select('.headlineStack__list li'):
+        try:
+            headline = item.get_text(strip=True)
+            link = item.find('a')['href']
+            if not link.startswith('http'):
+                link = f"https://www.espn.com{link}"
+            articles.append({'title': headline, 'link': link})
+        except (TypeError, KeyError):
+            print(f"Error parsing item: {item}")
+
+    return articles
+
 
 
 def normalize_input(value):

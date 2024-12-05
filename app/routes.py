@@ -5,7 +5,6 @@ import sqlalchemy as sa
 from app import db
 from app import app
 from app.forms import LoginForm, RegistrationForm, BanUserForm, UnbanUserForm
-from flask import flash, abort
 from app.forms import LoginForm, RegistrationForm, BanUserForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
@@ -643,3 +642,9 @@ def grid_solver():
             left_column=left_column,
             grid=grid
         )
+
+@app.route('/news', methods=['GET'])
+@login_required
+def show_articles():
+    articles = scrape_espn_mlb_news()
+    return render_template('articles.html', articles=articles)

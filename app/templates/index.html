@@ -25,6 +25,9 @@
                 <li>
                     <strong>Solve Immaculate Grid:</strong> Solve the immaculate grid game for any day!
                 </li>
+                <li>
+                    <strong>Current MLB News:</strong> Look at news articles around the MLB!
+                </li>
             </ul>
         </div>
 
@@ -33,6 +36,7 @@
             <a href="{{ url_for('comparePlayers') }}" class="back-button">Compare Batters</a>
             <a href="{{ url_for('view_parks') }}" class="back-button">View Parks</a>
             <a href="{{ url_for('grid_solver') }}" class="back-button">Solve Grid</a>
+            <a href="{{ url_for('show_articles') }}" class="back-button">Look at News</a>
         </div>
     </div>
 {% endblock %}
