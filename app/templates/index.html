@@ -17,13 +17,14 @@
                     <strong>Team Summary:</strong> View a comprehensive overview of baseball teams for a given year with things such as player and team stats and a depth chart.
                 </li>
                 <li>
+                    <strong>Solve Immaculate Grid:</strong> Solve the immaculate grid game for any day!
+                </li>
+                <li>
+
                     <strong>Compare Batter Stats:</strong> Analyze and compare the batting statistics of two players, including hits, home runs, RBIs, averages, and WAR (Wins Above Replacement).
                 </li>
                 <li>
                     <strong>View Parks:</strong> Explore the locations of parks on an interactive map.
-                </li>
-                <li>
-                    <strong>Solve Immaculate Grid:</strong> Solve the immaculate grid game for any day!
                 </li>
                 <li>
                     <strong>Current MLB News:</strong> Look at news articles around the MLB!
@@ -33,9 +34,9 @@
 
         <div class="nav-links">
             <a href="{{ url_for('team_selection') }}" class="back-button">Team Summary</a>
+            <a href="{{ url_for('grid_solver') }}" class="back-button">Solve Grid</a>
             <a href="{{ url_for('comparePlayers') }}" class="back-button">Compare Batters</a>
             <a href="{{ url_for('view_parks') }}" class="back-button">View Parks</a>
-            <a href="{{ url_for('grid_solver') }}" class="back-button">Solve Grid</a>
             <a href="{{ url_for('show_articles') }}" class="back-button">Look at News</a>
         </div>
     </div>
