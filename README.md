@@ -117,3 +117,36 @@
    ```
 4. The project should now be running!
 
+## **MariaDeadbeats App Features**
+
+- **Team Summary**:
+   - A page that shows a team from a specific year and stats about that team and the players from that team
+   - Some shown stats are things like `war` and `k/9`
+   - This page also displays informations about the teams perfomance on the year
+   
+- **Depth Chart**
+  - A page that shows the players for a team and how often they played throughout the season
+  - Shows a projected starting lineup based on the playing time for each player
+    
+ - **Compare Batters**
+   - A page that allows the user to enter the name of two batters and compares their stats
+   - It compares the following stats: `hits`, `homeruns`, `RBIs`, `avg`, `WAR`
+
+- **Solve Grid**
+  - A page thar solves the immaculate grid game for any game
+  
+- **View Parks**
+  - A page that shows the location of every baseball park on an interactive map
+  - It contains links to Google Street View to examine the locations of these stadiums
+  - Historical stadiums are attempeted to be displayed but commercial areas often replace these stadiums
+ 
+- **News**
+  - A page that shows current news from ESPN about the MLB
+  - Article titles can be selected to read the ESPN article on their website
+
+- **Admin Account**
+  - An account that can be used to control access to the application
+  - Has the ability to ban users, unban users and create other add admin users
+ 
+- Check out the app! It is really cool and has a lot of awesome features!
+
