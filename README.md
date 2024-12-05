@@ -148,5 +148,5 @@
   - An account that can be used to control access to the application
   - Has the ability to ban users, unban users and create other add admin users
  
-- Check out the app! It is really cool and has a lot of awesome features!
+Check out the app! It is really cool and has a lot of awesome features!
 
