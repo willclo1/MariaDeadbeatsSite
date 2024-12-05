@@ -64,7 +64,28 @@
      mysql -u your_username -p MariaDeadbeats < C:\\path\\to\\sql_dump.sql
      ```
 3. Your database is updated!
+---
+## **How to Run the Flask App**
 
+### **Step-by-Step Instructions**
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/willclo1/MariaDeadbeatsSite.git
+   ```
+2. Set up a virtual environment and install requirements:
+   ```bash
+   cd MariaDeadbeatsSite
+   python -m venv project_env
+   source project_env/bin/activate  # macOS/Linux
+   project_env\Scripts\activate    # Windows
+   pip install -r requirements.txt
+   ```
+3. Navigate to the project root directory and run the Flask app:
+   ```bash
+   flask run
+   ```
+4. The project should now be running!
 ---
 
 ## **Updates to the Database**
@@ -94,28 +115,6 @@
   - This table is used to register new users in the Flask application.
 
 ---
-
-## **How to Run the Flask App**
-
-### **Step-by-Step Instructions**
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/willclo1/MariaDeadbeatsSite.git
-   ```
-2. Set up a virtual environment and install requirements:
-   ```bash
-   cd MariaDeadbeatsSite
-   python -m venv project_env
-   source project_env/bin/activate  # macOS/Linux
-   project_env\Scripts\activate    # Windows
-   pip install -r requirements.txt
-   ```
-3. Navigate to the project root directory and run the Flask app:
-   ```bash
-   flask run
-   ```
-4. The project should now be running!
 
 ## **MariaDeadbeats App Features**
 
@@ -150,3 +149,4 @@
  
 Check out the app! It is really cool and has a lot of awesome features!
 
+---
