@@ -196,11 +196,11 @@ def season_countdown():
 
     # Format the date and time for the first game
     game_time = first_game["scheduled"]
-
-    game_date_and_time = datetime.fromisoformat(first_game["scheduled"]).strftime("%b %d, %Y %I:%M %p")
+    game_date_and_time = datetime.fromisoformat(game_time).strftime("%b %d, %Y %I:%M %p")
     date_object = datetime.fromisoformat(game_time)
     formatted_date = date_object.strftime("%A, %B %d, %Y at %I:%M %p")
 
+    # Add the formatted date back to first_game for the template
     first_game["scheduled"] = formatted_date
 
     countdown_data = {
@@ -212,7 +212,8 @@ def season_countdown():
         'season_countdown.html',
         title='Season Countdown',
         countdown_data=countdown_data,
-        first_game=first_game
+        first_game=first_game,
+        game_date_and_time=game_date_and_time
     )
 
 

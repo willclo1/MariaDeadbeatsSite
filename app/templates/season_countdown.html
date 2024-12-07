@@ -1,137 +1,136 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <head>
-        <title>Compare Players</title>
-        <style>
-            /* General Page Styles */
-            body {
-                font-family: 'Arial', sans-serif;
-                background: linear-gradient(135deg, #007bff, #6c757d);
-                color: #f9f9f9;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
+<head>
+    <title>Season Countdown</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-            .container {
-                background: #fff;
-                color: #333;
-                padding: 40px;
-                border-radius: 10px;
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-                width: 100%;
-                max-width: 400px;
-                text-align: center;
-            }
+        .container {
+            background: #fff;
+            color: #333;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
 
-            h1 {
-                color: #007bff;
-                margin-bottom: 20px;
-                font-size: 24px;
-            }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
 
-            label {
-                font-size: 16px;
-                font-weight: bold;
-                margin-bottom: 10px;
-                display: block;
-                color: #555;
-            }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+        }
 
-            input[type="text"] {
-                width: 100%;
-                padding: 10px;
-                margin-bottom: 20px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-size: 14px;
-            }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-            button {
-                background-color: #007bff;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                font-size: 16px;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: all 0.3s ease-in-out;
-                width: 100%;
-            }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+        }
 
-            button:hover {
-                background-color: #0056b3;
-                transform: scale(1.02);
-            }
-            .back-button {
-                background-color: #6c757d;
-                margin-top: 10px;
-            }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
 
-            .back-button:hover {
-                background-color: #5a6268;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Season Countdown</h1>
-            <h2>Season {{ countdown_data.season }} starts in: </h2>
-            <p id="countdown"></p>
-            <script>
+        .back-button {
+            background-color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Season Countdown</h1>
+        <h2>Season {{ countdown_data.season }} starts in:</h2>
+        <p id="countdown"></p>
+        <script>
             // Set the date we're counting down to
             let startTime = "{{ countdown_data.datetime }}";
             let countDownDate = new Date(startTime).getTime();
 
             // Update the count down every 1 second
-            let x = setInterval(function() {
+            let x = setInterval(function () {
+                // Get today's date and time
+                let now = new Date().getTime();
 
-              // Get today's date and time
-              let now = new Date().getTime();
+                // Find the distance between now and the count down date
+                let distance = countDownDate - now;
 
-              // Find the distance between now and the count down date
-              let distance = countDownDate - now;
+                // Time calculations for days, hours, minutes and seconds
+                let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-              // Time calculations for days, hours, minutes and seconds
-              let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-              let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-              let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-              let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // Display the result in the element with id="countdown"
+                document.getElementById("countdown").innerHTML =
+                    days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-              // Display the result in the element with id="countdown"
-              document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-              + minutes + "m " + seconds + "s ";
-
-              // If the count down is finished, write some text
-              if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
-              }
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "EXPIRED";
+                }
             }, 1000);
-            </script>
-        </div>
-        <div class="container" style ="text-align: right;" >
-            <h1>First game of the season: </h1>
-            <div class="game-details">
-            <p><strong>Date & Time:</strong> {{ game_date_and_time }} </p>
-            <p><strong>Time Zone:</strong> {{ first_game["venue"]["time_zone"] }} </p>
+        </script>
+    </div>
+    <div class="container" style="text-align: left;">
+        <h1>First game of the season:</h1>
+        <div class="game-details">
+            <p><strong>Date & Time:</strong> {{ game_date_and_time }}</p>
+            <p><strong>Time Zone:</strong> {{ first_game["venue"]["time_zone"] }}</p>
             <p><strong>Location:</strong> {{ first_game["venue"]["name"] }}, {{ first_game["venue"]["city"] }}</p>
         </div>
 
         <!-- Teams -->
         <div class="team-details">
             <div>
-                <p><strong> Home Team: </strong>{{ first_game["home"]["market"] }}, {{ first_game["home"]["name"]}}</p>
+                <p><strong>Home Team:</strong> {{ first_game["home"]["market"] }} {{ first_game["home"]["name"] }}</p>
             </div>
             <div>
-                <p><strong>Away Team:  </strong>{{ first_game["away"]["market"] }}, {{ first_game["away"]["name"]}}</p>
+                <p><strong>Away Team:</strong> {{ first_game["away"]["market"] }} {{ first_game["away"]["name"] }}</p>
             </div>
         </div>
-
     </div>
-    </body>
+</body>
 {% endblock %}
