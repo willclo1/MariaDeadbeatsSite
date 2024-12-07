@@ -182,10 +182,10 @@ def year_selection():
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
 
+
 @app.route('/season-countdown', methods=['GET', 'POST'])
 @login_required
 def season_countdown():
-
     url1 = f"https://api.sportradar.com/mlb/trial/v7/en/games/2025/REG/schedule.json?api_key={sportradar_api_key}"
     headers = {"accept": "application/json"}
     response = requests.get(url1, headers=headers)
@@ -193,14 +193,25 @@ def season_countdown():
     games = data["games"]
     sorted_games = sorted(games, key=lambda game: datetime.fromisoformat(game["scheduled"]))
     first_game = sorted_games[0]
+
+    # Format the date and time for the first game
     game_time = first_game["scheduled"]
-
     date_object = datetime.fromisoformat(game_time)
-    countdown_data = {'season': date_object.year, 'datetime' : date_object.strftime("%b %d, %Y %H:%M:%S")}
+    formatted_date = date_object.strftime("%A, %B %d, %Y at %I:%M %p")
 
-    return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game)
+    first_game["scheduled"] = formatted_date
 
+    countdown_data = {
+        'season': date_object.year,
+        'datetime': date_object.strftime("%A, %B %d, %Y at %I:%M %p")
+    }
 
+    return render_template(
+        'season_countdown.html',
+        title='Season Countdown',
+        countdown_data=countdown_data,
+        first_game=first_game
+    )
 @app.route('/summary', methods=['GET'])
 @login_required
 def summary():
