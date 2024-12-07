@@ -118,39 +118,50 @@
 
 ## **MariaDeadbeats App Features**
 
-- **Team Summary**:
+- **Team Summary(Will)**:
    - A page that shows a team from a specific year and stats about that team and the players from that team
    - Some shown stats are things like `war` and `k/9`
    - This page also displays information about the teams performance on the year
    
-- **Depth Chart**
+- **Depth Chart(Joseph)**
   - A page that shows the players for a team and how often they played throughout the season
   - Shows a projected starting lineup based on the playing time for each player
     
- - **Compare Batters**
+ - **Compare Batters(Will)**
    - A page that allows the user to enter the name of two batters and compares their stats
    - It compares the following stats: `hits`, `homeruns`, `RBIs`, `avg`, `WAR`
 
-- **Solve Grid**
+- **Solve Grid(Devan)**
   - A page thar solves the immaculate grid game for any game
   
-- **View Parks**
+- **View Parks(Will)**
   - A page that shows the location of every baseball park on an interactive map
   - It contains links to Google Street View to examine the locations of these stadiums
   - Historical stadiums are attempted to be displayed but commercial areas often replace these stadiums
  
-- **News**
+- **News(Will)**
   - A page that shows current news from ESPN about the MLB
   - Article titles can be selected to read the ESPN article on their website
 
-- **Admin Account**
+- **Admin Account(Nick)**
   - An account that can be used to control access to the application
   - Has the ability to ban users, unban users, view a list of banned users,
   - and create other admin users.
+  - Login info:
+      - username: `admin`
+      - password: `pass`
 
-- **Season Countdown** 
+- **Season Countdown(Nick)** 
   - A page that counts down until the start of the season and will also display information about
   - the first game of the season. Uses sportradar api to get up to date information.
  
-Check out the app! It is really cool and has a lot of awesome features!
+- **Team Compare(Rafe)**
+  - A page that compares two selected team's stats and information for a selected year
+  - Compares data like `league`, `rank`, `wins`, `losses` and various batting stats among other things
+   
+- **Team Games(Nick)**
+  - Gets all the games for a team for the upcoming baseball season
+  - Contains the date of the game and the teams in the game as well as the location
+ 
+Check out the app! It is really cool and has a lot of awesome features! 
 
