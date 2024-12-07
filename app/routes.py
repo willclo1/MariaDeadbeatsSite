@@ -26,7 +26,6 @@ engine = create_engine(engineStr)
 templates_path = os.path.join(basedir, 'templates')
 
 
-
 @app.route('/home')
 @app.route('/')
 @app.route('/index')
@@ -37,7 +36,6 @@ def index():
         return render_template('index.html', title='Home Page')
     else:
         return render_template("admin_index.html", title="Admin landing page")
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -62,10 +60,13 @@ def login():
         else:
             return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
+
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 # not sure if we need this, makes it work to import the css, probably a fix?
 @app.route('/team-selection', methods=['GET', 'POST'])
@@ -85,6 +86,7 @@ def team_selection():
 
     return render_template('team_selection.html', tmOptions=tmOptions)
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -100,6 +102,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+
 def admin_status_required():
     def admin_status_decorator(func):
         @wraps(func)
@@ -109,8 +112,11 @@ def admin_status_required():
             else:
                 # Handle the case where the condition is not met
                 return "Admin Status is required", 403  # For example, return a 403 Forbidden
+
         return admin_status_wrapper
+
     return admin_status_decorator
+
 
 @app.route('/ban-user', methods=['GET', 'POST'])
 @login_required
@@ -124,7 +130,7 @@ def ban_user():
             Users.username == ban_form.username.data))
         banned_user = BannedUsers(username=ban_form.username.data, email=email)
         print("banning user: ")
-        print(ban_form.username.data + " " +  email)
+        print(ban_form.username.data + " " + email)
         db.session.add(banned_user)
         db.session.commit()
         output_string = "User Banned: " + banned_user.username + " - email: " + banned_user.email
@@ -144,8 +150,7 @@ def ban_user():
 
     banned_users = BannedUsers.query.all()
     return render_template('ban_user.html', title='Ban User',
-                           BanForm=ban_form, UnbanForm=unban_form,BannedUsers = banned_users)
-
+                           BanForm=ban_form, UnbanForm=unban_form, BannedUsers=banned_users)
 
 
 @app.route('/admin-register', methods=['GET', 'POST'])
@@ -163,6 +168,7 @@ def admin_register():
         flash(output_string)
     return render_template('admin_register.html', title='Register', form=form)
 
+
 @app.route('/year-selection', methods=['GET', 'POST'])
 @login_required
 def year_selection():
@@ -170,7 +176,6 @@ def year_selection():
 
     Session = sessionmaker(bind=engine)
     session = Session()
-
 
     yearSQL = text("SELECT DISTINCT yearID FROM teams WHERE team_name = :team ORDER BY yearID;")
     yrResult = session.execute(yearSQL, {'team': selected_team})
@@ -218,6 +223,7 @@ def season_countdown():
 
 
 from datetime import datetime
+
 
 @app.route('/get-all-games-for-a-team', methods=['GET', 'POST'])
 @login_required
@@ -274,6 +280,8 @@ def get_all_games_for_a_team():
         tmOptions=tmOptions,
         format_date=lambda date: datetime.fromisoformat(date).strftime('%B %d, %Y at %I:%M %p')
     )
+
+
 @app.route('/summary', methods=['GET'])
 @login_required
 def summary():
@@ -281,7 +289,6 @@ def summary():
     year = request.args.get('year')
     if not team or not year:
         return "Error: Team and year must be specified", 400
-
 
     with engine.connect() as connection:
         team_query = text("""
@@ -359,7 +366,6 @@ def summary():
                     "k_bb": f"{k_bb:.3f}" if walks > 0 else 'N/A',
                     "war": round(war, 2) if war != 'N/A' else 'N/A',
                 })
-
 
         pitching_team_query = text(f"""
             SELECT 
@@ -483,7 +489,6 @@ def summary():
         else:
             division_standings = []
 
-
         team_stats_query = text("""
             SELECT 
                 team_G AS games,
@@ -516,7 +521,6 @@ def summary():
                                                                               "fielding_pct"] is not None else "N/A",
         }
 
-
     summary_data = {
         "team": team,
         "year": year,
@@ -528,6 +532,7 @@ def summary():
     }
 
     return render_template('summary.html', summary=summary_data)
+
 
 @app.route("/comparePlayers", methods=['GET', 'POST'])
 @login_required
@@ -558,9 +563,10 @@ def comparePlayers():
                 WHERE p.nameFirst = :first AND p.nameLast = :last
                 GROUP BY p.playerID;
             """)
-            player1_stats = connection.execute(player_query, {"first": player1_first, "last": player1_last}).mappings().first() if 'player1_first' in locals() else None
-            player2_stats = connection.execute(player_query, {"first": player2_first, "last": player2_last}).mappings().first() if 'player2_first' in locals() else None
-
+            player1_stats = connection.execute(player_query, {"first": player1_first,
+                                                              "last": player1_last}).mappings().first() if 'player1_first' in locals() else None
+            player2_stats = connection.execute(player_query, {"first": player2_first,
+                                                              "last": player2_last}).mappings().first() if 'player2_first' in locals() else None
 
             if not player1_stats or not player2_stats:
                 player1_fallback = {"first": "Babe", "last": "Ruth"}
@@ -797,22 +803,27 @@ def depth_chart():
         year=year
     )
 
+
 @app.route("/viewParks")
 @login_required
 def view_parks():
     try:
         # Connect to the database and fetch parks data
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT parkID, park_name, city, state, country, latitude, longitude FROM parks"))
+            result = conn.execute(
+                text("SELECT parkID, park_name, city, state, country, latitude, longitude FROM parks"))
             parks = [dict(row) for row in result.mappings()]
 
         return render_template("view_parks.html", parks=parks)
     except Exception as e:
         return f"An error occurred: {e}", 500
+
+
 @app.route('/admin-landing-page')
 @login_required
 def admin_landing_page():
     return render_template("admin_index.html", title="Admin landing page")
+
 
 @app.route('/grid-solver', methods=['GET', 'POST'])
 @login_required
@@ -865,6 +876,7 @@ def grid_solver():
             left_column=left_column,
             grid=grid
         )
+
 
 @app.route('/news', methods=['GET'])
 @login_required

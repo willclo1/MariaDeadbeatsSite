@@ -44,6 +44,7 @@
             border-radius: 8px;
             text-align: left;
         }
+
         .back-button {
             display: inline-block;
             margin: 20px auto;
@@ -98,22 +99,23 @@
     </style>
 </head>
 <body>
-    <main class="container">
-        <h1>Today's News in Baseball</h1>
-        <section class="instructions">
-            <p>Welcome to the News page! Here, you'll find the latest headlines and updates from Major League Baseball. Click on any headline to read the full article on ESPN's official website.</p>
-        </section>
-        {% for article in articles %}
-            <div class="card">
-                <div class="card-title">
-                    <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
-                </div>
-                <div class="card-content">
-                    <p>Catch up on the latest updates and insights from MLB. Click above to learn more!</p>
-                </div>
+<main class="container">
+    <h1>Today's News in Baseball</h1>
+    <section class="instructions">
+        <p>Welcome to the News page! Here, you'll find the latest headlines and updates from Major League Baseball.
+            Click on any headline to read the full article on ESPN's official website.</p>
+    </section>
+    {% for article in articles %}
+        <div class="card">
+            <div class="card-title">
+                <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
             </div>
-        {% endfor %}
+            <div class="card-content">
+                <p>Catch up on the latest updates and insights from MLB. Click above to learn more!</p>
+            </div>
+        </div>
+    {% endfor %}
     <a href="{{ url_for('index') }}" class="back-button">Back to Home</a>
-    </main>
+</main>
 </body>
 </html>

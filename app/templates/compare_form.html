@@ -67,6 +67,7 @@
                 background-color: #0056b3;
                 transform: scale(1.02);
             }
+
             .back-button {
                 background-color: #6c757d;
                 margin-top: 10px;
@@ -78,18 +79,18 @@
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1>Compare Players</h1>
-            <form method="POST" action="/comparePlayers">
-                <label for="player1">Player 1:</label>
-                <input type="text" id="player1" name="player1" placeholder="Enter Player 1 Name" required>
+    <div class="container">
+        <h1>Compare Players</h1>
+        <form method="POST" action="/comparePlayers">
+            <label for="player1">Player 1:</label>
+            <input type="text" id="player1" name="player1" placeholder="Enter Player 1 Name" required>
 
-                <label for="player2">Player 2:</label>
-                <input type="text" id="player2" name="player2" placeholder="Enter Player 2 Name" required>
+            <label for="player2">Player 2:</label>
+            <input type="text" id="player2" name="player2" placeholder="Enter Player 2 Name" required>
 
-                <button type="submit">Compare</button>
-            </form>
-            <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
-        </div>
+            <button type="submit">Compare</button>
+        </form>
+        <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
+    </div>
     </body>
 {% endblock %}

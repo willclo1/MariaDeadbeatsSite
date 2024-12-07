@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 
 def scrape_espn_mlb_news():
     url = "https://www.espn.com/mlb/"
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
     response = requests.get(url, headers=headers)
 
     if response.status_code != 200:
@@ -40,15 +41,20 @@ def scrape_espn_mlb_news():
 
     return articles
 
+
 def normalize_input(value):
     return " ".join(value.replace("\xa0", " ").split())
+
 
 def normalize_team_name(team_name):
     return " ".join(team_name.replace("\xa0", " ").split())
 
+
 # Connect to the database
 def get_db_connection():
-    return pymysql.connect(host=cfg.get(""),user=cfg.get("user"), password=cfg.get("password"), db=cfg.get("db"),cursorclass=pymysql.cursors.DictCursor)
+    return pymysql.connect(host=cfg.get(""), user=cfg.get("user"), password=cfg.get("password"), db=cfg.get("db"),
+                           cursorclass=pymysql.cursors.DictCursor)
+
 
 # General function to execute SQL queries
 def execute_query(query, params=None, column_name="playerID"):
@@ -64,6 +70,7 @@ def execute_query(query, params=None, column_name="playerID"):
         return set()
     finally:
         connection.close()
+
 
 def get_franchise_id(team_name):
     """
@@ -89,6 +96,7 @@ def get_franchise_id(team_name):
     # Debugging fallback if no match found
     print(f"No franchID found for team: {normalized_team_name}")
     return None
+
 
 # Query players for a team
 def get_players_for_team(team_name):
@@ -116,13 +124,8 @@ WHERE t.franchid = (
     return execute_query(query, (team_name,))
 
 
-
-
-
-
 # Query players for trivia
 def get_players_for_trivia(trivia):
-
     trivia_map = {
         "30+ HR /30+ SB SeasonBatting": """
         SELECT playerID
@@ -413,8 +416,8 @@ def get_players_for_trivia(trivia):
         print(f"No SQL query mapped for trivia: {normalized_trivia}")
         return set()
 
-
     return execute_query(query)
+
 
 # Determine if input is a team
 def is_team(input_value):
@@ -432,6 +435,7 @@ def is_team(input_value):
     finally:
         connection.close()
 
+
 def get_players_for_team_and_trivia(team_name, trivia):
     """
     Fetch playerIDs where the trivia condition is met while the player was with the specified team.
@@ -444,7 +448,6 @@ def get_players_for_team_and_trivia(team_name, trivia):
         print(f"No team-specific query mapped for trivia: {trivia}")
         return set()
 
-
     params = (team_name,)
     team_specific_results = execute_query(query, params)
 
@@ -453,6 +456,7 @@ def get_players_for_team_and_trivia(team_name, trivia):
 
     print(f"No team-specific match found for trivia: {trivia}. Trying general trivia query.")
     return []
+
 
 # Fetch the playerName from the MySQL database using playerID
 def get_player_name_and_years_from_db(player_id):
@@ -501,6 +505,7 @@ def remove_duplicates_keep_detailed(items):
         if not is_duplicate:
             filtered_items.append(items[i])  # Append the original unnormalized item
     return filtered_items
+
 
 # Scrape the grid
 def scrape_immaculate_grid(puzzle_number=None):
@@ -560,7 +565,7 @@ def scrape_immaculate_grid(puzzle_number=None):
 
 # Define your trivia_team_map with all the necessary queries
 trivia_team_map = {
-"All Star": """
+    "All Star": """
         SELECT DISTINCT ap.playerID
         FROM allstarfull ap
         JOIN appearances a ON ap.playerID = a.playerID AND ap.yearID = a.yearID
@@ -574,7 +579,7 @@ trivia_team_map = {
         LIMIT 1
     ) ;
     """,
-"300+ HR CareerBatting": """
+    "300+ HR CareerBatting": """
         SELECT playerID
         FROM (
             SELECT b.playerID, SUM(b.b_HR) AS total_hr
@@ -836,7 +841,7 @@ WHERE p.birthCountry = 'USA' AND t.franchid = (
         LIMIT 1
     ) AND WSWin = 'Y';
     """,
-"30+ HR /30+ SB SeasonBatting": """
+    "30+ HR /30+ SB SeasonBatting": """
         SELECT DISTINCT s.playerID
         FROM (
             SELECT playerID, yearID
@@ -855,7 +860,7 @@ WHERE p.birthCountry = 'USA' AND t.franchid = (
         LIMIT 1
     ) ;
     """,
- "First Round Draft Pick": """
+    "First Round Draft Pick": """
         SELECT DISTINCT a.playerID
         FROM draft d
         JOIN batting a ON d.playerID = a.playerID
@@ -869,7 +874,7 @@ WHERE p.birthCountry = 'USA' AND t.franchid = (
         LIMIT 1
     ) ;
     """,
-"40+ WAR Career": """
+    "40+ WAR Career": """
     SELECT playerID
     FROM (
         SELECT b.playerID, SUM(b.b_WAR) AS career_war
@@ -1413,7 +1418,7 @@ WHERE p.birthCountry = 'USA' AND t.franchid = (
         LIMIT 1
     )  AND p.p_ER / (p.p_IPOuts / 3) <= 3.00;
     """,
-"Only One Team": """
+    "Only One Team": """
         SELECT a.playerID
         FROM appearances a
         GROUP BY a.playerID
@@ -1431,7 +1436,6 @@ WHERE p.birthCountry = 'USA' AND t.franchid = (
         ) THEN 1 ELSE 0 END) = 0;
     """,
 }
-
 
 
 # Function to solve the puzzle
@@ -1545,4 +1549,3 @@ def get_oldest_player(player_ids, selected_player_ids):
         return None
     finally:
         connection.close()
-

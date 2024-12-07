@@ -8,23 +8,25 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     </head>
     <body>
-        <div class="container">
-            <div class="icon">📅</div>
-            <h1>Select a Year</h1>
-            <div class="instructions">
-                <p>Now that you've chosen <strong>{{ selected_team }}</strong>, pick a year from the dropdown below and click <strong>Submit</strong>.</p>
-            </div>
-            <form method="POST" action="{{ url_for('year_selection') }}?team={{ selected_team }}">
-                <label for="year">Choose a Year:</label>
-                <select name="year" id="year">
-                    <option value="">--Select a Year--</option>
-                    {% for option in yrOptions %}
-                        <option value="{{ option }}">{{ option }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="footer-note">Want to pick a different team? <a href={{ url_for('team_selection') }}>Start over</a>.</div>
+    <div class="container">
+        <div class="icon">📅</div>
+        <h1>Select a Year</h1>
+        <div class="instructions">
+            <p>Now that you've chosen <strong>{{ selected_team }}</strong>, pick a year from the dropdown below and
+                click <strong>Submit</strong>.</p>
         </div>
+        <form method="POST" action="{{ url_for('year_selection') }}?team={{ selected_team }}">
+            <label for="year">Choose a Year:</label>
+            <select name="year" id="year">
+                <option value="">--Select a Year--</option>
+                {% for option in yrOptions %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="footer-note">Want to pick a different team? <a href={{ url_for('team_selection') }}>Start over</a>.
+        </div>
+    </div>
     </body>
 {% endblock %}
