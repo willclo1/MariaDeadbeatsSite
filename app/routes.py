@@ -196,11 +196,11 @@ def season_countdown():
 
     # Format the date and time for the first game
     game_time = first_game["scheduled"]
-
-    game_date_and_time = datetime.fromisoformat(first_game["scheduled"]).strftime("%b %d, %Y %I:%M %p")
+    game_date_and_time = datetime.fromisoformat(game_time).strftime("%b %d, %Y %I:%M %p")
     date_object = datetime.fromisoformat(game_time)
     formatted_date = date_object.strftime("%A, %B %d, %Y at %I:%M %p")
 
+    # Add the formatted date back to first_game for the template
     first_game["scheduled"] = formatted_date
 
     countdown_data = {
@@ -212,52 +212,68 @@ def season_countdown():
         'season_countdown.html',
         title='Season Countdown',
         countdown_data=countdown_data,
-        first_game=first_game
+        first_game=first_game,
+        game_date_and_time=game_date_and_time
     )
 
+
+from datetime import datetime
 
 @app.route('/get-all-games-for-a-team', methods=['GET', 'POST'])
 @login_required
 def get_all_games_for_a_team():
-
     url = f"https://api.sportradar.com/mlb/trial/v7/en/games/2025/REG/schedule.json?api_key={sportradar_api_key}"
     headers = {"accept": "application/json"}
     response = requests.get(url, headers=headers)
     data = json.loads(response.text)
-
-
 
     team_games = {}
     for game in data["games"]:
         home_team = game["home"]["name"]
         away_team = game["away"]["name"]
 
+        # Ensure teams exist in the dictionary
         if home_team not in team_games:
             team_games[home_team] = []
-        team_games[home_team].append(game)
-
         if away_team not in team_games:
             team_games[away_team] = []
+
+        # Append games to respective teams
+        team_games[home_team].append(game)
         team_games[away_team].append(game)
 
+    # Sort games by date and time for each team
     for key in team_games.keys():
         team_games[key] = sorted(team_games[key], key=lambda game: datetime.fromisoformat(game["scheduled"]))
 
+    # Example debug output for a specific team
     team_name = "Yankees"
     if team_name in team_games:
         for game in team_games[team_name]:
-            print(game["scheduled"], game["home"]["name"], "vs", game["away"]["name"])
+            game_date = datetime.fromisoformat(game["scheduled"]).strftime('%B %d, %Y at %I:%M %p')
+            print(game_date, game["home"]["name"], "vs", game["away"]["name"])
 
+    # Prepare team options and selected team
     tmOptions = team_games.keys()
     selected_team = None
 
     if request.method == 'POST':
         selected_team = request.form.get('team')
-        return render_template('get_all_games_for_a_team.html', title ='get all games',
-                           team_games=team_games[selected_team], tmOptions=tmOptions)
-    return render_template('get_all_games_for_a_team.html', title ='get all games',
-                           team_games='', tmOptions=tmOptions)
+        return render_template(
+            'get_all_games_for_a_team.html',
+            title='Get All Games',
+            team_games=team_games[selected_team],
+            tmOptions=tmOptions,
+            format_date=lambda date: datetime.fromisoformat(date).strftime('%B %d, %Y at %I:%M %p')
+        )
 
+    return render_template(
+        'get_all_games_for_a_team.html',
+        title='Get All Games',
+        team_games='',
+        tmOptions=tmOptions,
+        format_date=lambda date: datetime.fromisoformat(date).strftime('%B %d, %Y at %I:%M %p')
+    )
 @app.route('/summary', methods=['GET'])
 @login_required
 def summary():
