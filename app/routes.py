@@ -201,7 +201,20 @@ def season_countdown():
     date_object = datetime.fromisoformat(game_time)
     formatted_date = date_object.strftime("%A, %B %d, %Y at %I:%M %p")
 
-    return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game, game_date_and_time=game_date_and_time)
+    first_game["scheduled"] = formatted_date
+
+    countdown_data = {
+        'season': date_object.year,
+        'datetime': date_object.strftime("%A, %B %d, %Y at %I:%M %p")
+    }
+
+    return render_template(
+        'season_countdown.html',
+        title='Season Countdown',
+        countdown_data=countdown_data,
+        first_game=first_game
+    )
+
 
 @app.route('/get-all-games-for-a-team', methods=['GET', 'POST'])
 @login_required
@@ -240,22 +253,11 @@ def get_all_games_for_a_team():
 
     if request.method == 'POST':
         selected_team = request.form.get('team')
-
-    return render_template('get_all_games_for_a_team.html', title ='get all games',
+        return render_template('get_all_games_for_a_team.html', title ='get all games',
                            team_games=team_games[selected_team], tmOptions=tmOptions)
-    first_game["scheduled"] = formatted_date
+    return render_template('get_all_games_for_a_team.html', title ='get all games',
+                           team_games='', tmOptions=tmOptions)
 
-    countdown_data = {
-        'season': date_object.year,
-        'datetime': date_object.strftime("%A, %B %d, %Y at %I:%M %p")
-    }
-
-    return render_template(
-        'season_countdown.html',
-        title='Season Countdown',
-        countdown_data=countdown_data,
-        first_game=first_game
-    )
 @app.route('/summary', methods=['GET'])
 @login_required
 def summary():
