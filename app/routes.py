@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import wraps
 
 from flask_login import login_required, current_user, login_user, logout_user
@@ -12,6 +13,8 @@ from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from cfg import engineStr
+from cfg import sportradar_api_key
+import json
 from app.models import Users, BannedUsers
 from urllib.parse import urlsplit
 import os
@@ -178,6 +181,24 @@ def year_selection():
         return redirect(url_for('summary', team=selected_team, year=selected_year))
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
+
+@app.route('/season-countdown', methods=['GET', 'POST'])
+@login_required
+def season_countdown():
+
+    url1 = f"https://api.sportradar.com/mlb/trial/v7/en/games/2025/REG/schedule.json?api_key={sportradar_api_key}"
+    headers = {"accept": "application/json"}
+    response = requests.get(url1, headers=headers)
+    data = json.loads(response.text)
+    games = data["games"]
+    sorted_games = sorted(games, key=lambda game: datetime.fromisoformat(game["scheduled"]))
+    first_game = sorted_games[0]
+    game_time = first_game["scheduled"]
+
+    date_object = datetime.fromisoformat(game_time)
+    countdown_data = {'season': date_object.year, 'datetime' : date_object.strftime("%b %d, %Y %H:%M:%S")}
+
+    return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game)
 
 
 @app.route('/summary', methods=['GET'])
