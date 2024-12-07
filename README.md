@@ -121,7 +121,7 @@
 - **Team Summary**:
    - A page that shows a team from a specific year and stats about that team and the players from that team
    - Some shown stats are things like `war` and `k/9`
-   - This page also displays informations about the teams perfomance on the year
+   - This page also displays information about the teams performance on the year
    
 - **Depth Chart**
   - A page that shows the players for a team and how often they played throughout the season
@@ -137,7 +137,7 @@
 - **View Parks**
   - A page that shows the location of every baseball park on an interactive map
   - It contains links to Google Street View to examine the locations of these stadiums
-  - Historical stadiums are attempeted to be displayed but commercial areas often replace these stadiums
+  - Historical stadiums are attempted to be displayed but commercial areas often replace these stadiums
  
 - **News**
   - A page that shows current news from ESPN about the MLB
@@ -145,7 +145,12 @@
 
 - **Admin Account**
   - An account that can be used to control access to the application
-  - Has the ability to ban users, unban users and create other add admin users
+  - Has the ability to ban users, unban users, view a list of banned users,
+  - and create other admin users.
+
+- **Season Countdown** 
+  - A page that counts down until the start of the season and will also display information about
+  - the first game of the season. Uses sportradar api to get up to date information.
  
 Check out the app! It is really cool and has a lot of awesome features!
 
