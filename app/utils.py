@@ -17,19 +17,28 @@ def scrape_espn_mlb_news():
     soup = BeautifulSoup(response.text, 'html.parser')
 
     articles = []
+    seen_titles = set()  # Use a set to track unique titles
+
     for item in soup.select('.headlineStack__list li'):
         try:
             headline = item.get_text(strip=True)
             link = item.find('a')['href']
+
+            # Ensure the link is absolute
             if not link.startswith('http'):
                 link = f"https://www.espn.com{link}"
-            articles.append({'title': headline, 'link': link})
+
+            # Check if the title is already processed
+            if headline not in seen_titles:
+                articles.append({'title': headline, 'link': link})
+                seen_titles.add(headline)
+            else:
+                print(f"Duplicate title found: {headline}")
+
         except (TypeError, KeyError):
             print(f"Error parsing item: {item}")
 
     return articles
-
-
 
 def normalize_input(value):
     return " ".join(value.replace("\xa0", " ").split())

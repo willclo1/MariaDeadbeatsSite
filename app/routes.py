@@ -182,10 +182,10 @@ def year_selection():
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
 
+
 @app.route('/season-countdown', methods=['GET', 'POST'])
 @login_required
 def season_countdown():
-
     url1 = f"https://api.sportradar.com/mlb/trial/v7/en/games/2025/REG/schedule.json?api_key={sportradar_api_key}"
     headers = {"accept": "application/json"}
     response = requests.get(url1, headers=headers)
@@ -193,11 +193,13 @@ def season_countdown():
     games = data["games"]
     sorted_games = sorted(games, key=lambda game: datetime.fromisoformat(game["scheduled"]))
     first_game = sorted_games[0]
+
+    # Format the date and time for the first game
     game_time = first_game["scheduled"]
 
     game_date_and_time = datetime.fromisoformat(first_game["scheduled"]).strftime("%b %d, %Y %I:%M %p")
     date_object = datetime.fromisoformat(game_time)
-    countdown_data = {'season': date_object.year, 'datetime' : date_object.strftime("%b %d, %Y %H:%M:%S")}
+    formatted_date = date_object.strftime("%A, %B %d, %Y at %I:%M %p")
 
     return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game, game_date_and_time=game_date_and_time)
 
@@ -241,8 +243,19 @@ def get_all_games_for_a_team():
 
     return render_template('get_all_games_for_a_team.html', title ='get all games',
                            team_games=team_games[selected_team], tmOptions=tmOptions)
+    first_game["scheduled"] = formatted_date
 
+    countdown_data = {
+        'season': date_object.year,
+        'datetime': date_object.strftime("%A, %B %d, %Y at %I:%M %p")
+    }
 
+    return render_template(
+        'season_countdown.html',
+        title='Season Countdown',
+        countdown_data=countdown_data,
+        first_game=first_game
+    )
 @app.route('/summary', methods=['GET'])
 @login_required
 def summary():
@@ -644,7 +657,7 @@ def view_parks():
         # Connect to the database and fetch parks data
         with engine.connect() as conn:
             result = conn.execute(text("SELECT parkID, park_name, city, state, country, latitude, longitude FROM parks"))
-            parks = [dict(row) for row in result.mappings()]  # Use .mappings() to get dictionary-like rows
+            parks = [dict(row) for row in result.mappings()]
 
         return render_template("view_parks.html", parks=parks)
     except Exception as e:

@@ -6,6 +6,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 cfg = {"host" : "localhost", "user": "guest_user", "password" : "guestPassword123", "db" : "MariaDeadbeats"}
 engineStr = "mysql+pymysql://" + cfg.get("user") + ":" + cfg.get("password") + "@" + cfg.get(
         "host") + ":3306/" + cfg.get("db")
+
+
+
 sportradar_api_key = 'Ba2s9dFhXNxg4mSfShenScIRzO7fbXpReFyS6cGx'
 
 # configuration for database can config from class config to simplify configuration

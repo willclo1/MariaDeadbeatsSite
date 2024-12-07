@@ -44,6 +44,16 @@
             border-radius: 8px;
             text-align: left;
         }
+        .back-button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
 
         .card {
             background: linear-gradient(135deg, #ffffff, #f7f7f7);
@@ -89,9 +99,9 @@
 </head>
 <body>
     <main class="container">
-        <h1>ESPN MLB News</h1>
+        <h1>Today's News in Baseball</h1>
         <section class="instructions">
-            <p>Welcome to the ESPN MLB News page! Here, you'll find the latest headlines and updates from Major League Baseball. Click on any headline to read the full article on ESPN's official website.</p>
+            <p>Welcome to the News page! Here, you'll find the latest headlines and updates from Major League Baseball. Click on any headline to read the full article on ESPN's official website.</p>
         </section>
         {% for article in articles %}
             <div class="card">
@@ -103,6 +113,7 @@
                 </div>
             </div>
         {% endfor %}
+    <a href="{{ url_for('index') }}" class="back-button">Back to Home</a>
     </main>
 </body>
 </html>
