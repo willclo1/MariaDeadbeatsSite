@@ -113,6 +113,11 @@
 - **Users**:
   - A table with `id`, `username`, `email`, `time_of_last_access`, `password_hash`, and `is_admin`.
   - This table is used to register new users in the Flask application.
+   
+- **Negro League**:
+  - A table with `id`, `playerName`, `position`, `startYear` and `endYear`
+  - This table is used to get information on players who played in the negro leagues
+
 
 ---
 
