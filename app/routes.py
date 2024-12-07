@@ -576,6 +576,135 @@ def comparePlayers():
     # If GET request, render the compare form
     return render_template("compare_form.html")
 
+@app.route("/compareTeams", methods=['GET', 'POST'])
+@login_required
+def compare_teams():
+    """
+    [POST] Retrieve batting statistics for two given teams in a certain year,
+    and produce HTML comparing the two teams. If the entered names of a team
+    are invalid or the year is not applicable to either team, the produced
+    HTML will use the Minnesota Twins and the Atlanta Braves during 1991
+    as the output.
+
+    [GET] produce HTML form to enter the names of the two teams and a year.
+
+    :return: HTML for the results of a form or an unfilled form.
+    """
+    message = None
+
+    if request.method == 'POST':
+        team1 = request.form['team1']
+        team2 = request.form['team2']
+        team1 = team1.strip().title()
+        team2 = team2.strip().title()
+        year = request.form['year']
+        print(f"Team 1: {team1}, Team 2: {team2}, Year: {year}")
+
+        with engine.connect() as connection:
+            team_query = text("""
+                SELECT t.team_name as name,
+                    t.lgID AS league,
+                    t.team_rank AS rank,
+                    t.team_G AS games,
+                    t.team_W AS wins,
+                    t.team_L AS losses,
+                    t.team_projW AS projWins,
+                    t.team_projL AS projLoss,
+                    t.WSWin as WSWin,
+                    t.team_R AS runs,
+                    t.team_AB AS atBats,
+                    t.team_H AS H,
+                    t.team_2B AS "2B",
+                    t.team_3B AS "3B",
+                    t.team_HR AS HR,
+                    (t.team_H + (2 * t.team_2B) + (3 * t.team_3B) + (4 * t.team_HR)) AS TB,
+                    SUM(b.b_RBI) AS RBI,
+                    t.team_BB AS BB,
+                    t.team_SO AS SO,
+                    t.team_SB AS SB,
+                    t.team_CS AS CS,
+                    (t.team_H / t.team_AB) AS AVG,
+                    ((t.team_H + t.team_BB + t.team_HBP) 
+                        / (t.team_AB + t.team_BB + t.team_HBP + t.team_SF)) AS OBP,
+                    ((t.team_H + (2 * t.team_2B) + (3 * t.team_3B) + (4 * t.team_HR)) 
+                        / t.team_AB) AS SLG,
+                    (((t.team_H + t.team_BB + t.team_HBP) / (t.team_AB + t.team_BB + t.team_HBP + t.team_SF)) 
+                        + ((t.team_H + (2 * t.team_2B) + (3 * t.team_3B) + (4 * t.team_HR)) / t.team_AB)) AS OPS
+                FROM teams t JOIN batting b 
+                    ON t.teamID = b.teamID 
+                    AND t.yearID = b.yearId
+                WHERE t.team_name = :teamName AND t.yearID = :year
+                GROUP BY 
+                    t.team_name, t.lgID, t.team_rank, t.team_G, t.team_W, t.team_L, 
+                    t.team_projW, t.team_projL, t.WSWin, t.team_R, t.team_AB, t.team_H, 
+                    t.team_2B, t.team_3B, t.team_HR, t.team_BB, t.team_SO, t.team_SB, t.team_CS;
+            """)
+            '''
+            team1_stats = (
+                connection
+                    .execute(team_query, {"teamName": team1, "year": year})
+                    .mappings().first() if team1 in locals() and year in locals()
+                    else None
+            )
+            '''
+            team1_stats = connection.execute(team_query, {"teamName": team1, "year": year}).mappings().first()
+            print(f"{team1_stats}")
+            team2_stats = connection.execute(team_query, {"teamName": team2, "year": year}).mappings().first()
+            print(f"{team2_stats}")
+
+            # Fallback, defaults to Minnesota Twins and Atlanta Braves in 1991
+            if not team1_stats or not team2_stats or not year:
+                message = """
+                    Invalid input. Loading Minnesota Twins and Atlanta Braves 
+                    in the year 1991 as default.
+                """
+                print(f"year: {year}\nteam1_stats: {team1_stats}\nteam2_stats: {team2_stats}")
+                year = 1991
+                default_team_1 = {"teamName": "Minnesota Twins", "year": 1991}
+                default_team_2 = {"teamName": "Atlanta Braves", "year": 1991}
+                team1_stats = connection.execute(team_query, default_team_1).mappings().first()
+                team2_stats = connection.execute(team_query, default_team_2).mappings().first()
+
+            # Dictionary conversion
+            team1_stats = dict(team1_stats) if team1_stats else None
+            team2_stats = dict(team2_stats) if team2_stats else None
+
+            # AVG
+            if team1_stats and 'AVG' in team1_stats and team1_stats['AVG']:
+                team1_stats['AVG'] = f"{team1_stats['AVG']:.3f}"
+            if team2_stats and 'AVG' in team2_stats and team2_stats['AVG']:
+                team2_stats['AVG'] = f"{team2_stats['AVG']:.3f}"
+
+            # OBP
+            if team1_stats and 'OBP' in team1_stats and team1_stats['OBP']:
+                team1_stats['OBP'] = f"{team1_stats['OBP']:.3f}"
+            if team2_stats and 'OBP' in team2_stats and team2_stats['OBP']:
+                team2_stats['OBP'] = f"{team2_stats['OBP']:.3f}"
+
+            # SLG
+            if team1_stats and 'SLG' in team1_stats and team1_stats['SLG']:
+                team1_stats['SLG'] = f"{team1_stats['SLG']:.3f}"
+            if team2_stats and 'SLG' in team2_stats and team2_stats['SLG']:
+                team2_stats['SLG'] = f"{team2_stats['SLG']:.3f}"
+
+            # OPS
+            if team1_stats and 'OPS' in team1_stats and team1_stats['OPS']:
+                team1_stats['OPS'] = f"{team1_stats['OPS']:.3f}"
+            if team2_stats and 'OPS' in team2_stats and team2_stats['OPS']:
+                team2_stats['OPS'] = f"{team2_stats['OPS']:.3f}"
+
+        return render_template(
+            "compare_team.html",
+            team1=team1_stats,
+            team2=team2_stats,
+            year=year,
+            message=message
+        )
+
+    # GET request returns form
+    return render_template("compare_team_form.html")
+
+
 @app.route('/depth_chart', methods=['GET'])
 @login_required
 def depth_chart():

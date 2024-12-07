@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <head>
+        <title>Compare Players</title>
+        <style>
+            /* General Page Styles */
+            body {
+                font-family: 'Arial', sans-serif;
+                background: linear-gradient(135deg, #007bff, #6c757d);
+                color: #f9f9f9;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                background: #fff;
+                color: #333;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+            }
+
+            h1 {
+                color: #007bff;
+                margin-bottom: 20px;
+                font-size: 24px;
+            }
+
+            label {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                display: block;
+                color: #555;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+            input[type="number"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                width: 100%;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+                transform: scale(1.02);
+            }
+            .back-button {
+                background-color: #6c757d;
+                margin-top: 10px;
+            }
+
+            .back-button:hover {
+                background-color: #5a6268;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Compare Teams</h1>
+            <form method="POST" action="/compareTeams">
+                <label for="team1">Team 1:</label>
+                <input type="text" id="team1" name="team1" placeholder="Minnesota Twins" required>
+
+                <label for="team2">Team 2:</label>
+                <input type="text" id="team2" name="team2" placeholder="Atlanta Braves" required>
+
+                <label for="year">Year (1871-2023):</label>
+                {# <input type="range" id="year" name="year" min="1871" max="2023" placeholder="1991" required> #}
+                <input type="number" id="year" name="year" min="1871" max="2023" required placeholder="Enter a year between 1871 and 2023" step="1">
+
+                <button type="submit">Compare</button>
+            </form>
+            <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
+        </div>
+    </body>
+{% endblock %}
