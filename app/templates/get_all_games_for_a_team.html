@@ -2,7 +2,7 @@
 
 {% block content %}
     <head>
-        <title>Compare Players</title>
+        <title>Get Team Games</title>
         <style>
             /* General Page Styles */
             body {
@@ -140,7 +140,7 @@
                 <h1>Game Number {{ loop.index }}</h1>
                 <div style="text-align: left;">
                     <div class="game-details">
-                        <p><strong>Date & Time:</strong> {{ game["scheduled"] }}</p>
+                        <p><strong>Date & Time:</strong> {{ format_date(game["scheduled"]) }}</p>
                         <p><strong>Time Zone:</strong> {{ game["venue"]["time_zone"] }}</p>
                         <p><strong>Location:</strong> {{ game["venue"]["name"] }}, {{ game["venue"]["city"] }}</p>
                     </div>
