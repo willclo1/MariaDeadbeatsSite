@@ -581,7 +581,7 @@ def view_parks():
         # Connect to the database and fetch parks data
         with engine.connect() as conn:
             result = conn.execute(text("SELECT parkID, park_name, city, state, country, latitude, longitude FROM parks"))
-            parks = [dict(row) for row in result.mappings()]  # Use .mappings() to get dictionary-like rows
+            parks = [dict(row) for row in result.mappings()]
 
         return render_template("view_parks.html", parks=parks)
     except Exception as e:
