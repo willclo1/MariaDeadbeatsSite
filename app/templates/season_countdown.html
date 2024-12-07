@@ -114,20 +114,21 @@
             }, 1000);
             </script>
         </div>
-        <div class="container">
+        <div class="container" style ="text-align: right;" >
             <h1>First game of the season: </h1>
             <div class="game-details">
-            <p><strong>Date & Time:</strong> {{ first_game["scheduled"] }} </p>
+            <p><strong>Date & Time:</strong> {{ game_date_and_time }} </p>
+            <p><strong>Time Zone:</strong> {{ first_game["venue"]["time_zone"] }} </p>
             <p><strong>Location:</strong> {{ first_game["venue"]["name"] }}, {{ first_game["venue"]["city"] }}</p>
         </div>
 
         <!-- Teams -->
         <div class="team-details">
             <div>
-                <p><strong> {{ first_game["home"]["market"] }}, {{ first_game["home"]["name"]}}</strong> (Home)</p>
+                <p><strong> Home Team: </strong>{{ first_game["home"]["market"] }}, {{ first_game["home"]["name"]}}</p>
             </div>
             <div>
-                <p><strong>{{ first_game["away"]["market"] }}, {{ first_game["away"]["name"]}} </strong>(Away)</p>
+                <p><strong>Away Team:  </strong>{{ first_game["away"]["market"] }}, {{ first_game["away"]["name"]}}</p>
             </div>
         </div>
 

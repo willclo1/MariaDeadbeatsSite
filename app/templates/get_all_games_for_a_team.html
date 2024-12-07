@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <head>
+        <title>Compare Players</title>
+        <style>
+            /* General Page Styles */
+            body {
+                font-family: 'Arial', sans-serif;
+                background: linear-gradient(135deg, #007bff, #6c757d);
+                color: #f9f9f9;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .container {
+                background: #fff;
+                color: #333;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                color: #007bff;
+                margin-bottom: 20px;
+                font-size: 24px;
+            }
+
+            label {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                display: block;
+                color: #555;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                width: 100%;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+                transform: scale(1.02);
+            }
+
+            .back-button {
+                background-color: #6c757d;
+                margin-top: 10px;
+            }
+
+            .back-button:hover {
+                background-color: #5a6268;
+            }
+
+            .games-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 15px;
+                padding: 20px;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .game-card {
+                background: #fff;
+                color: #333;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s ease;
+                text-align: left;
+            }
+
+            .game-card:hover {
+                transform: scale(1.03);
+            }
+
+            .game-details,
+            .team-details {
+                margin-top: 10px;
+            }
+
+            .game-card h1 {
+                font-size: 18px;
+                color: #007bff;
+                margin-bottom: 10px;
+            }
+
+            .game-card p {
+                margin: 5px 0;
+                color: #555;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <form method="POST" action="/get-all-games-for-a-team">
+            <label for="team">Choose a Team:</label>
+            <select name="team" id="team">
+                <option value="">--Select a Team--</option>
+                {% for option in tmOptions %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="games-grid">
+        {% for game in team_games %}
+            <div class="game-card">
+                <h1>Game Number {{ loop.index }}</h1>
+                <div style="text-align: left;">
+                    <div class="game-details">
+                        <p><strong>Date & Time:</strong> {{ game["scheduled"] }}</p>
+                        <p><strong>Time Zone:</strong> {{ game["venue"]["time_zone"] }}</p>
+                        <p><strong>Location:</strong> {{ game["venue"]["name"] }}, {{ game["venue"]["city"] }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Home Team: </strong>{{ game["home"]["market"] }} {{ game["home"]["name"] }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Away Team: </strong>{{ game["away"]["market"] }} {{ game["away"]["name"] }}</p>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+    </body>
+{% endblock %}

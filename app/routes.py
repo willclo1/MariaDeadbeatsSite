@@ -195,10 +195,52 @@ def season_countdown():
     first_game = sorted_games[0]
     game_time = first_game["scheduled"]
 
+    game_date_and_time = datetime.fromisoformat(first_game["scheduled"]).strftime("%b %d, %Y %I:%M %p")
     date_object = datetime.fromisoformat(game_time)
     countdown_data = {'season': date_object.year, 'datetime' : date_object.strftime("%b %d, %Y %H:%M:%S")}
 
-    return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game)
+    return render_template('season_countdown.html', title = 'season countdown', countdown_data=countdown_data, first_game=first_game, game_date_and_time=game_date_and_time)
+
+@app.route('/get-all-games-for-a-team', methods=['GET', 'POST'])
+@login_required
+def get_all_games_for_a_team():
+
+    url = f"https://api.sportradar.com/mlb/trial/v7/en/games/2025/REG/schedule.json?api_key={sportradar_api_key}"
+    headers = {"accept": "application/json"}
+    response = requests.get(url, headers=headers)
+    data = json.loads(response.text)
+
+
+
+    team_games = {}
+    for game in data["games"]:
+        home_team = game["home"]["name"]
+        away_team = game["away"]["name"]
+
+        if home_team not in team_games:
+            team_games[home_team] = []
+        team_games[home_team].append(game)
+
+        if away_team not in team_games:
+            team_games[away_team] = []
+        team_games[away_team].append(game)
+
+    for key in team_games.keys():
+        team_games[key] = sorted(team_games[key], key=lambda game: datetime.fromisoformat(game["scheduled"]))
+
+    team_name = "Yankees"
+    if team_name in team_games:
+        for game in team_games[team_name]:
+            print(game["scheduled"], game["home"]["name"], "vs", game["away"]["name"])
+
+    tmOptions = team_games.keys()
+    selected_team = None
+
+    if request.method == 'POST':
+        selected_team = request.form.get('team')
+
+    return render_template('get_all_games_for_a_team.html', title ='get all games',
+                           team_games=team_games[selected_team], tmOptions=tmOptions)
 
 
 @app.route('/summary', methods=['GET'])
