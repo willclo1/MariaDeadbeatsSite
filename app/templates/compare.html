@@ -93,44 +93,44 @@
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1>Player Comparison</h1>
-            {% if message %}
-                <p style="color: red;">{{ message }}</p>
-            {% endif %}
-            <table>
-                <tr>
-                    <th>Stat</th>
-                    <th>{{ player1['nameFirst'] }} {{ player1['nameLast'] }}</th>
-                    <th>{{ player2['nameFirst'] }} {{ player2['nameLast'] }}</th>
-                </tr>
-                <tr>
-                    <td>Total Hits</td>
-                    <td>{{ player1['total_hits'] }}</td>
-                    <td>{{ player2['total_hits'] }}</td>
-                </tr>
-                <tr>
-                    <td>Home Runs</td>
-                    <td>{{ player1['total_home_runs'] }}</td>
-                    <td>{{ player2['total_home_runs'] }}</td>
-                </tr>
-                <tr>
-                    <td>RBIs</td>
-                    <td>{{ player1['total_rbi'] }}</td>
-                    <td>{{ player2['total_rbi'] }}</td>
-                </tr>
-                <tr>
-                    <td>Career Average</td>
-                    <td>{{ player1['avg'] }}</td>
-                    <td>{{ player2['avg'] }}</td>
-                </tr>
-                <tr>
-                    <td>Career War</td>
-                    <td>{{ player1['total_war'] }}</td>
-                    <td>{{ player2['total_war'] }}</td>
-                </tr>
-            </table>
-            <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
-        </div>
+    <div class="container">
+        <h1>Player Comparison</h1>
+        {% if message %}
+            <p style="color: red;">{{ message }}</p>
+        {% endif %}
+        <table>
+            <tr>
+                <th>Stat</th>
+                <th>{{ player1['nameFirst'] }} {{ player1['nameLast'] }}</th>
+                <th>{{ player2['nameFirst'] }} {{ player2['nameLast'] }}</th>
+            </tr>
+            <tr>
+                <td>Total Hits</td>
+                <td>{{ player1['total_hits'] }}</td>
+                <td>{{ player2['total_hits'] }}</td>
+            </tr>
+            <tr>
+                <td>Home Runs</td>
+                <td>{{ player1['total_home_runs'] }}</td>
+                <td>{{ player2['total_home_runs'] }}</td>
+            </tr>
+            <tr>
+                <td>RBIs</td>
+                <td>{{ player1['total_rbi'] }}</td>
+                <td>{{ player2['total_rbi'] }}</td>
+            </tr>
+            <tr>
+                <td>Career Average</td>
+                <td>{{ player1['avg'] }}</td>
+                <td>{{ player2['avg'] }}</td>
+            </tr>
+            <tr>
+                <td>Career War</td>
+                <td>{{ player1['total_war'] }}</td>
+                <td>{{ player2['total_war'] }}</td>
+            </tr>
+        </table>
+        <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
+    </div>
     </body>
 {% endblock %}

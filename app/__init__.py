@@ -4,7 +4,6 @@ from cfg import Config
 from flask_login import LoginManager
 from datetime import timedelta
 
-
 app = Flask(__name__)
 # have to set database uri to initialize database: this should be done in a config file
 # we should probably be using this
@@ -16,7 +15,6 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_message = None
 login.login_view = 'login'
-
 
 from app.models import Users
 

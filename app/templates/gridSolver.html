@@ -116,6 +116,7 @@
         td:hover {
             background-color: #cce5ff;
         }
+
         .back-button-container {
             text-align: center;
             margin-top: 20px;
@@ -140,54 +141,55 @@
     </style>
 </head>
 <body>
-    <h1>Immaculate Grid Solver</h1>
-    <div id="puzzle-number-display">
-        {% if latest_puzzle_number %}
-            <p>Current Puzzle Number: {{ puzzle_number or latest_puzzle_number }}</p>
-        {% endif %}
-    </div>
-    <form method="post" id="puzzle-input">
-        <label for="puzzle_number">Enter Puzzle Number:</label>
-        <input type="number" id="puzzle_number" name="puzzle_number" min="1" placeholder="Current Day's Puzzle" value="{{ puzzle_number or '' }}">
-        <button type="submit" name="action" value="load_puzzle" id="load-button">Load Puzzle</button>
-        <button type="submit" name="action" value="solve_puzzle" id="solve-button">Solve Puzzle</button>
-    </form>
+<h1>Immaculate Grid Solver</h1>
+<div id="puzzle-number-display">
+    {% if latest_puzzle_number %}
+        <p>Current Puzzle Number: {{ puzzle_number or latest_puzzle_number }}</p>
+    {% endif %}
+</div>
+<form method="post" id="puzzle-input">
+    <label for="puzzle_number">Enter Puzzle Number:</label>
+    <input type="number" id="puzzle_number" name="puzzle_number" min="1" placeholder="Current Day's Puzzle"
+           value="{{ puzzle_number or '' }}">
+    <button type="submit" name="action" value="load_puzzle" id="load-button">Load Puzzle</button>
+    <button type="submit" name="action" value="solve_puzzle" id="solve-button">Solve Puzzle</button>
+</form>
 
-    {% if top_row and left_column %}
+{% if top_row and left_column %}
     <table>
         <tr>
             <th></th>
             {% for col_value in top_row %}
-            <th>{{ col_value }}</th>
+                <th>{{ col_value }}</th>
             {% endfor %}
         </tr>
         {% for row_value in left_column %}
-        {% set row_index = loop.index0 %}
-        <tr>
-            <th>{{ row_value }}</th>
-            {% for col_index in range(0, top_row|length) %}
-            <td>
-                {% if grid %}
-                    {% if grid[row_index][col_index] == "No Match" %}
-                        No Match
-                    {% else %}
-                        {{ grid[row_index][col_index][0] }}<br>
-                        <small>{{ grid[row_index][col_index][1] }}</small>
-                    {% endif %}
-                {% else %}
-                    <!-- Empty cell -->
-                {% endif %}
-            </td>
-            {% endfor %}
-        </tr>
+            {% set row_index = loop.index0 %}
+            <tr>
+                <th>{{ row_value }}</th>
+                {% for col_index in range(0, top_row|length) %}
+                    <td>
+                        {% if grid %}
+                            {% if grid[row_index][col_index] == "No Match" %}
+                                No Match
+                            {% else %}
+                                {{ grid[row_index][col_index][0] }}<br>
+                                <small>{{ grid[row_index][col_index][1] }}</small>
+                            {% endif %}
+                        {% else %}
+                            <!-- Empty cell -->
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
     </table>
-    {% endif %}
-    {% if error_message %}
+{% endif %}
+{% if error_message %}
     <p id="error-message">{{ error_message }}</p>
-    {% endif %}
-    <div class="back-button-container">
-        <a href="/" class="back-button">Back to Home</a>
-    </div>
+{% endif %}
+<div class="back-button-container">
+    <a href="/" class="back-button">Back to Home</a>
+</div>
 </body>
 </html>

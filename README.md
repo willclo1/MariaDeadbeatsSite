@@ -148,6 +148,12 @@
   - A page that shows current news from ESPN about the MLB
   - Article titles can be selected to read the ESPN article on their website
 
+- **User Account(Nick)**
+  - Through creation of an account, users are allowed to access any pages locked 
+  - through the @login_required annotation.
+  - User passwords are hashed when stored in our database and User Emails are required to
+  - fit a valid email format.
+
 - **Admin Account(Nick)**
   - An account that can be used to control access to the application
   - Has the ability to ban users, unban users, view a list of banned users,
@@ -155,10 +161,11 @@
   - Login info:
       - username: `admin`
       - password: `pass`
+  - Admin specific pages are accessible only by admins through @admin_status_required annotation.
 
 - **Season Countdown(Nick)** 
   - A page that counts down until the start of the season and will also display information about
-  - the first game of the season. Uses sportradar api to get up to date information.
+  - the first game of the season. Uses sportradar api to get up-to-date information.
  
 - **Team Compare(Rafe)**
   - A page that compares two selected team's stats and information for a selected year
@@ -167,6 +174,7 @@
 - **Team Games(Nick)**
   - Gets all the games for a team for the upcoming baseball season
   - Contains the date of the game and the teams in the game as well as the location
+  - Also uses sportradar api to get up-to-date information.
  
 Check out the app! It is really cool and has a lot of awesome features! 
 

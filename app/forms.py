@@ -18,6 +18,7 @@ class LoginForm(FlaskForm):
         if user is not None:
             raise ValidationError('YOU HAVE BEEN BANNED!')
 
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -44,7 +45,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
-
 class BanUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     submit = SubmitField('Ban')
@@ -58,6 +58,7 @@ class BanUserForm(FlaskForm):
             BannedUsers.username == username.data))
         if banned_user_test is not None:
             raise ValidationError('This user is already banned!')
+
 
 class UnbanUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
