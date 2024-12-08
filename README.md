@@ -150,7 +150,9 @@
 
 - **User Account(Nick)**
   - Through creation of an account, users are allowed to access any pages locked 
-  - through the @login_required annotation.
+  - through the @login_required annotation. 
+  - When not logged in if user attempts to navigate to a restricted page, they are sent to
+  - the login page and will be routed back to their desired page upon a successful login.
   - User passwords are hashed when stored in our database and User Emails are required to
   - fit a valid email format.
 
