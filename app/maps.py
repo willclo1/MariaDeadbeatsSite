@@ -1,16 +1,16 @@
 trivia_map = {
-        "30+ HR /30+ SB SeasonBatting": """
+    "30+ HR /30+ SB SeasonBatting": """
         SELECT playerID
         FROM batting
         GROUP BY playerID, yearID
         HAVING SUM(b_HR) >= 30 AND SUM(b_SB) >= 30;
     """,
-        "First Round Draft Pick": """
+    "First Round Draft Pick": """
             SELECT playerID
             FROM draft join batting using (playerid)
             WHERE round = 1 and batting.yearid > 1964 and nameFirst != 'Jerry' and nameLast != 'Johnson';
         """,
-        "40+ WAR Career": """
+    "40+ WAR Career": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_WAR) AS career_war
@@ -20,12 +20,12 @@ trivia_map = {
             ) AS career_war_table;
         """,
 
-        "6+ WAR Season": """
+    "6+ WAR Season": """
             SELECT playerID
             FROM batting
             WHERE b_WAR >= 6;
         """,
-        ".300+ AVG CareerBatting": """
+    ".300+ AVG CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_H) AS total_hits, SUM(b_AB) AS total_at_bats
@@ -34,7 +34,7 @@ trivia_map = {
                 HAVING total_hits / total_at_bats > 0.300
             ) AS career_avg;
         """,
-        "300+ HR CareerBatting": """
+    "300+ HR CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_HR) AS total_hr
@@ -43,7 +43,7 @@ trivia_map = {
                 HAVING total_hr >= 300
             ) AS career_hr;
         """,
-        "300+ Save CareerPitching": """
+    "300+ Save CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_SV) AS total_saves
@@ -52,7 +52,7 @@ trivia_map = {
                 HAVING total_saves >= 300
             ) AS career_saves;
         """,
-        "300+ Wins CareerPitching": """
+    "300+ Wins CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_W) AS total_wins
@@ -61,7 +61,7 @@ trivia_map = {
                 HAVING total_wins >= 300
             ) AS career_wins;
         """,
-        "3000+ Hits CareerBatting": """
+    "3000+ Hits CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_H) AS total_hits
@@ -70,7 +70,7 @@ trivia_map = {
                 HAVING total_hits >= 3000
             ) AS career_hits;
         """,
-        "3000+ K CareerPitching": """
+    "3000+ K CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_SO) AS total_strikes
@@ -79,22 +79,22 @@ trivia_map = {
                 HAVING total_strikes >= 3000
             ) AS career_strikes;
         """,
-        "40+ 2B SeasonBatting": """
+    "40+ 2B SeasonBatting": """
             SELECT playerID
             FROM batting
             WHERE b_2B >= 40;
         """,
-        "40+ HR SeasonBatting": """
+    "40+ HR SeasonBatting": """
             SELECT playerID
             FROM batting
             WHERE b_HR >= 40;
         """,
-        "40+ Save SeasonPitching": """
+    "40+ Save SeasonPitching": """
             SELECT playerID
             FROM pitching
             WHERE p_SV >= 40;
         """,
-        "500+ HR CareerBatting": """
+    "500+ HR CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_HR) AS total_hr
@@ -103,53 +103,53 @@ trivia_map = {
                 HAVING total_hr >= 500
             ) AS career_hr;
         """,
-        "Born Outside US 50 States and DC": """
+    "Born Outside US 50 States and DC": """
             SELECT playerID
             FROM people
             WHERE birthCountry NOT IN ('USA', 'United States');
         """,
-        "Canada": """
+    "Canada": """
             SELECT playerID
             FROM people
             WHERE birthCountry = 'Canada';
         """,
-        "Dominican Republic": """
+    "Dominican Republic": """
             SELECT playerID
             FROM people
             WHERE birthCountry = 'Dominican Republic';
         """,
-        "Pitchedmin. 1 game": """
+    "Pitchedmin. 1 game": """
             SELECT DISTINCT playerID
             FROM pitching
             WHERE p_G > 0;
         """,
-        "Played In Major Negro Lgs": """
+    "Played In Major Negro Lgs": """
             SELECT DISTINCT playerID
             FROM negro_leagues;
         """,
-        "Puerto Rico": """
+    "Puerto Rico": """
             SELECT playerID
             FROM people
             WHERE birthCountry = 'Puerto Rico';
         """,
-        "United States": """
+    "United States": """
             SELECT playerID
             FROM people
             WHERE birthCountry = 'USA';
         """,
-        "World Series Champ WS Roster": """
+    "World Series Champ WS Roster": """
             SELECT DISTINCT playerID
             FROM world_series_rosters;
         """,
-        ".300+ AVG SeasonBatting": "SELECT playerID FROM batting WHERE b_H / b_AB > 0.300;",
-        "10+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 10;",
-        "10+ Win SeasonPitching": "SELECT playerID FROM pitching WHERE p_W >= 10;",
-        "100+ RBI SeasonBatting": "SELECT playerID FROM batting WHERE b_RBI >= 100;",
-        "100+ Run SeasonBatting": "SELECT playerID FROM batting WHERE b_R >= 100;",
-        "20+ Win SeasonPitching": "SELECT playerID FROM pitching WHERE p_W >= 20;",
-        "200+ Hits SeasonBatting": "SELECT playerID FROM batting WHERE b_H >= 200;",
-        "200+ K SeasonPitching": "SELECT playerID FROM pitching WHERE p_SO >= 200;",
-        "200+ Wins CareerPitching": """
+    ".300+ AVG SeasonBatting": "SELECT playerID FROM batting WHERE b_H / b_AB > 0.300;",
+    "10+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 10;",
+    "10+ Win SeasonPitching": "SELECT playerID FROM pitching WHERE p_W >= 10;",
+    "100+ RBI SeasonBatting": "SELECT playerID FROM batting WHERE b_RBI >= 100;",
+    "100+ Run SeasonBatting": "SELECT playerID FROM batting WHERE b_R >= 100;",
+    "20+ Win SeasonPitching": "SELECT playerID FROM pitching WHERE p_W >= 20;",
+    "200+ Hits SeasonBatting": "SELECT playerID FROM batting WHERE b_H >= 200;",
+    "200+ K SeasonPitching": "SELECT playerID FROM pitching WHERE p_SO >= 200;",
+    "200+ Wins CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_W) AS total_wins
@@ -158,7 +158,7 @@ trivia_map = {
                 HAVING total_wins >= 200
             ) AS career_wins;
         """,
-        "2000+ Hits CareerBatting": """
+    "2000+ Hits CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_H) AS total_hits
@@ -167,7 +167,7 @@ trivia_map = {
                 HAVING total_hits >= 2000
             ) AS career_hits;
         """,
-        "2000+ K CareerPitching": """
+    "2000+ K CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_SO) AS total_ks
@@ -176,11 +176,11 @@ trivia_map = {
                 HAVING total_ks >= 2000
             ) AS career_ks;
         """,
-        "30+ HR /30+ SB SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 30 AND b_SB >= 30;",
-        "30+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 30;",
-        "30+ SB Season": "SELECT playerID FROM batting WHERE b_SB >= 30;",
-        "30+ Save SeasonPitching": "SELECT playerID FROM pitching WHERE p_SV >= 30;",
-        "300+ HR CareerBatting": """
+    "30+ HR /30+ SB SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 30 AND b_SB >= 30;",
+    "30+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 30;",
+    "30+ SB Season": "SELECT playerID FROM batting WHERE b_SB >= 30;",
+    "30+ Save SeasonPitching": "SELECT playerID FROM pitching WHERE p_SV >= 30;",
+    "300+ HR CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_HR) AS total_hr
@@ -189,7 +189,7 @@ trivia_map = {
                 HAVING total_hr >= 300
             ) AS career_hr;
         """,
-        "300+ Save CareerPitching": """
+    "300+ Save CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_SV) AS total_saves
@@ -198,7 +198,7 @@ trivia_map = {
                 HAVING total_saves >= 300
             ) AS career_saves;
         """,
-        "300+ Wins CareerPitching": """
+    "300+ Wins CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_W) AS total_wins
@@ -207,7 +207,7 @@ trivia_map = {
                 HAVING total_wins >= 300
             ) AS career_wins;
         """,
-        "3000+ Hits CareerBatting": """
+    "3000+ Hits CareerBatting": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(b_H) AS total_hits
@@ -216,7 +216,7 @@ trivia_map = {
                 HAVING total_hits >= 3000
             ) AS career_hits;
         """,
-        "3000+ K CareerPitching": """
+    "3000+ K CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_SO) AS total_ks
@@ -225,52 +225,52 @@ trivia_map = {
                 HAVING total_ks >= 3000
             ) AS career_ks;
         """,
-        "40+ 2B SeasonBatting": "SELECT playerID FROM batting WHERE b_2B >= 40;",
-        "40+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 40;",
-        "40+ Save SeasonPitching": "SELECT playerID FROM pitching WHERE p_SV >= 40;",
-        # Non-stats-related trivia
-        "All Star": """
+    "40+ 2B SeasonBatting": "SELECT playerID FROM batting WHERE b_2B >= 40;",
+    "40+ HR SeasonBatting": "SELECT playerID FROM batting WHERE b_HR >= 40;",
+    "40+ Save SeasonPitching": "SELECT playerID FROM pitching WHERE p_SV >= 40;",
+    # Non-stats-related trivia
+    "All Star": """
         SELECT DISTINCT playerID
         FROM allstarfull;
     """,
-        "Born Outside US 50 States and DC": "SELECT playerID FROM people WHERE birthCountry NOT IN ('USA', 'United States', 'US');",
-        "Canada": "SELECT playerID FROM people WHERE birthCountry = 'Canada';",
-        "Cy Young": "SELECT playerID FROM awards WHERE awardID = 'Cy Young Award';",
-        "Designated Hittermin. 1 game": "SELECT playerID FROM appearances WHERE G_dh > 0;",
-        "Dominican Republic": "SELECT playerID FROM people WHERE birthCountry = 'Dominican Republic';",
-        "Gold Glove": "SELECT playerID FROM awards WHERE awardID = 'Gold Glove';",
-        "Hall of Fame": "SELECT playerID FROM halloffame where inducted = 'Y';",
-        "MVP": "SELECT playerID FROM awards WHERE awardID = 'Most Valuable Player';",
-        "Only One Team": """
+    "Born Outside US 50 States and DC": "SELECT playerID FROM people WHERE birthCountry NOT IN ('USA', 'United States', 'US');",
+    "Canada": "SELECT playerID FROM people WHERE birthCountry = 'Canada';",
+    "Cy Young": "SELECT playerID FROM awards WHERE awardID = 'Cy Young Award';",
+    "Designated Hittermin. 1 game": "SELECT playerID FROM appearances WHERE G_dh > 0;",
+    "Dominican Republic": "SELECT playerID FROM people WHERE birthCountry = 'Dominican Republic';",
+    "Gold Glove": "SELECT playerID FROM awards WHERE awardID = 'Gold Glove';",
+    "Hall of Fame": "SELECT playerID FROM halloffame where inducted = 'Y';",
+    "MVP": "SELECT playerID FROM awards WHERE awardID = 'Most Valuable Player';",
+    "Only One Team": """
             SELECT playerID
             FROM appearances
             GROUP BY playerID
             HAVING COUNT(DISTINCT teamID) = 1;
         """,
-        "Pitchedmin. 1 game": "SELECT playerID FROM appearances WHERE G_p > 0;",
-        "Played Catchermin. 1 game": "SELECT playerID FROM appearances WHERE G_c > 0;",
-        "Played Center Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_cf > 0;",
-        "Played First Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_1b > 0;",
-        "Played In Major Negro Lgs": "SELECT playerID FROM people WHERE lgID = 'Negro';",
-        "Played Left Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_lf > 0;",
-        "Played Outfieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_of > 0;",
-        "Played Right Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_rf > 0;",
-        "Played Second Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_2b > 0;",
-        "Played Shortstopmin. 1 game": "SELECT playerID FROM appearances WHERE G_ss > 0;",
-        "Played Third Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_3b > 0;",
-        "Puerto Rico": "SELECT playerID FROM people WHERE birthCountry = 'Puerto Rico';",
-        "Rookie of the Year": "SELECT playerID FROM awards WHERE awardID = 'Rookie of the Year Award';",
-        "Silver Slugger": "SELECT playerID FROM awards WHERE awardID = 'Silver Slugger';",
-        "Threw a No-Hitter": "SELECT playerID FROM pitching WHERE p_SHO > 0;",  # Approximation
-        "United States": "SELECT playerID FROM people WHERE birthCountry = 'USA';",
-        "World Series Champ WS Roster": """
+    "Pitchedmin. 1 game": "SELECT playerID FROM appearances WHERE G_p > 0;",
+    "Played Catchermin. 1 game": "SELECT playerID FROM appearances WHERE G_c > 0;",
+    "Played Center Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_cf > 0;",
+    "Played First Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_1b > 0;",
+    "Played In Major Negro Lgs": "SELECT playerID FROM people WHERE lgID = 'Negro';",
+    "Played Left Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_lf > 0;",
+    "Played Outfieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_of > 0;",
+    "Played Right Fieldmin. 1 game": "SELECT playerID FROM appearances WHERE G_rf > 0;",
+    "Played Second Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_2b > 0;",
+    "Played Shortstopmin. 1 game": "SELECT playerID FROM appearances WHERE G_ss > 0;",
+    "Played Third Basemin. 1 game": "SELECT playerID FROM appearances WHERE G_3b > 0;",
+    "Puerto Rico": "SELECT playerID FROM people WHERE birthCountry = 'Puerto Rico';",
+    "Rookie of the Year": "SELECT playerID FROM awards WHERE awardID = 'Rookie of the Year Award';",
+    "Silver Slugger": "SELECT playerID FROM awards WHERE awardID = 'Silver Slugger';",
+    "Threw a No-Hitter": "SELECT playerID FROM pitching WHERE p_SHO > 0;",  # Approximation
+    "United States": "SELECT playerID FROM people WHERE birthCountry = 'USA';",
+    "World Series Champ WS Roster": """
             SELECT DISTINCT playerID
             FROM seriespost
             WHERE round = 'WS' AND teamID IN (
                 SELECT teamID FROM teams WHERE WSWin = 'Y'
             );
         """,
-        "≤ 3.00 ERA CareerPitching": """
+    "≤ 3.00 ERA CareerPitching": """
             SELECT playerID
             FROM (
                 SELECT playerID, SUM(p_ER) / (SUM(p_IPOuts) / 3) AS era
@@ -279,8 +279,8 @@ trivia_map = {
                 HAVING era <= 3.00
             ) AS career_era;
         """,
-        "≤ 3.00 ERA Season": "SELECT playerID FROM pitching WHERE p_ER / (p_IPOuts / 3) <= 3.00;",
-    }
+    "≤ 3.00 ERA Season": "SELECT playerID FROM pitching WHERE p_ER / (p_IPOuts / 3) <= 3.00;",
+}
 
 trivia_team_map = {
     "All Star": """

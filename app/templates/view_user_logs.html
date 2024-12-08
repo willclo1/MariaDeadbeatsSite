@@ -2,17 +2,18 @@
 
 {% block content %}
     <style>
-         body {
-                font-family: 'Arial', sans-serif;
-                background: linear-gradient(135deg, #007bff, #6c757d);
-                color: #f9f9f9;
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                min-height: 100vh;
-                padding: 50px 0 0;
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #f9f9f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 0 0;
         }
+
         .container {
             background: #fff;
             color: #333;
@@ -104,7 +105,7 @@
                     <th>Year</th>
                 </tr>
                 </thead>
-            <tbody>
+                <tbody>
                 {% for UserLog in UserLogs %}
                     <tr>
                         <td>{{ UserLog['username'] }}</td>
@@ -113,7 +114,7 @@
                         <td>{{ UserLog['yearID'] }}</td>
                     </tr>
                 {% endfor %}
-            </tbody>
+                </tbody>
             </table>
         </div>
     </div>

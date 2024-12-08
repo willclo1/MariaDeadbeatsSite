@@ -83,11 +83,10 @@ def team_selection():
     if request.method == 'POST':
         selected_team = request.form.get('team')
         print(selected_team)
-        if(selected_team != ''):
+        if (selected_team != ''):
             return redirect(url_for('year_selection', team=selected_team))
         else:
             flash("Please choose a team", 'danger')
-
 
     return render_template('team_selection.html', tmOptions=tmOptions)
 
@@ -122,6 +121,7 @@ def admin_status_required():
 
     return admin_status_decorator
 
+
 @app.route('/view-user-logs', methods=['GET', 'POST'])
 @login_required
 @admin_status_required()
@@ -136,6 +136,7 @@ def view_user_logs():
         print(log.username)
 
     return render_template('view_user_logs.html', title='View User Logs', UserLogsForm=form, UserLogs=user_logs)
+
 
 @app.route('/ban-user', methods=['GET', 'POST'])
 @login_required
@@ -202,15 +203,15 @@ def year_selection():
 
     if request.method == 'POST':
         selected_year = request.form.get('year')
-        if(selected_year != ''):
+        if (selected_year != ''):
             new_user_log = UserLogs(username=current_user.username,
-                                    team_name= selected_team, yearID=selected_year)
+                                    team_name=selected_team, yearID=selected_year)
             db.session.add(new_user_log)
             db.session.commit()
             print("logged: " + new_user_log.username
-                      + " " + str(new_user_log.yearID) + " "
-                      + new_user_log.team_name + " "
-                      + str(new_user_log.time_of_query))
+                  + " " + str(new_user_log.yearID) + " "
+                  + new_user_log.team_name + " "
+                  + str(new_user_log.time_of_query))
             return redirect(url_for('summary', team=selected_team, year=selected_year))
         else:
             flash('Please enter a year', 'danger')
@@ -627,6 +628,7 @@ def comparePlayers():
 
     # If GET request, render the compare form
     return render_template("compare_form.html")
+
 
 @app.route("/compareTeams", methods=['GET', 'POST'])
 @login_required

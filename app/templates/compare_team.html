@@ -26,11 +26,11 @@
                 padding: 40px;
                 border-radius: 10px;
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-                width: 90%; {# 100% #}
-                max-width: 1200px; {# 400px #}
-                overflow-x: auto; {# new #}
-                margin: 20px auto; {# center container, add spacing #}
-                text-align: center;
+                width: 90%;
+            {# 100% #} max-width: 1200px;
+            {# 400px #} overflow-x: auto;
+            {# new #} margin: 20px auto;
+            {# center container, add spacing #} text-align: center;
             }
 
             h1 {
@@ -97,6 +97,7 @@
                 background-color: #0056b3;
                 transform: scale(1.02);
             }
+
             .back-button {
                 background-color: #6c757d;
                 margin-top: 10px;
@@ -108,74 +109,74 @@
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1>Team Comparisons in the Year {{ year }}</h1>
-            {% if message %}
-                <p style="color: red;">{{ message }}</p>
-            {% endif %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Team</th>
-                        <th>League</th>
-                        <th>World Series Win</th>
-                        <th>Rank</th>
-                        <th>Games Played</th>
-                        <th>Wins</th>
-                        <th>Losses</th>
-                        <th>Projected Wins</th>
-                        <th>Projected Losses</th>
-                        <th>At Bats</th>
-                        <th>Runs</th>
-                        <th>Hits</th>
-                        <th>Doubles</th>
-                        <th>Triples</th>
-                        <th>Home Runs</th>
-                        <th>Total Bases</th>
-                        <th>Runs Batted In</th>
-                        <th>Walks</th>
-                        <th>Strikeouts</th>
-                        <th>Stolen Bases</th>
-                        <th>Caught Stealing</th>
-                        <th>Batting Average</th>
-                        <th>On-Base Percentage</th>
-                        <th>Slugging Percentage</th>
-                        <th>On-Base Plus Slugging</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for team in [team1, team2] %}
-                    <tr>
-                        <td>{{ team.name }}</td>
-                        <td>{{ team.league }}</td>
-                        <td>{{ team.WSWin }}</td>
-                        <td>{{ team.rank }}</td>
-                        <td>{{ team.games }}</td>
-                        <td>{{ team.wins }}</td>
-                        <td>{{ team.losses }}</td>
-                        <td>{{ team.projWins }}</td>
-                        <td>{{ team.projLoss }}</td>
-                        <td>{{ team.atBats }}</td>
-                        <td>{{ team.runs }}</td>
-                        <td>{{ team.H }}</td>
-                        <td>{{ team['2B'] }}</td>
-                        <td>{{ team['3B'] }}</td>
-                        <td>{{ team.HR }}</td>
-                        <td>{{ team.TB }}</td>
-                        <td>{{ team.RBI }}</td>
-                        <td>{{ team.BB }}</td>
-                        <td>{{ team.SO }}</td>
-                        <td>{{ team.SB }}</td>
-                        <td>{{ team.CS }}</td>
-                        <td>{{ team.AVG }}</td>
-                        <td>{{ team.OBP }}</td>
-                        <td>{{ team.SLG }}</td>
-                        <td>{{ team.OPS }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
-        </div>
+    <div class="container">
+        <h1>Team Comparisons in the Year {{ year }}</h1>
+        {% if message %}
+            <p style="color: red;">{{ message }}</p>
+        {% endif %}
+        <table>
+            <thead>
+            <tr>
+                <th>Team</th>
+                <th>League</th>
+                <th>World Series Win</th>
+                <th>Rank</th>
+                <th>Games Played</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Projected Wins</th>
+                <th>Projected Losses</th>
+                <th>At Bats</th>
+                <th>Runs</th>
+                <th>Hits</th>
+                <th>Doubles</th>
+                <th>Triples</th>
+                <th>Home Runs</th>
+                <th>Total Bases</th>
+                <th>Runs Batted In</th>
+                <th>Walks</th>
+                <th>Strikeouts</th>
+                <th>Stolen Bases</th>
+                <th>Caught Stealing</th>
+                <th>Batting Average</th>
+                <th>On-Base Percentage</th>
+                <th>Slugging Percentage</th>
+                <th>On-Base Plus Slugging</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for team in [team1, team2] %}
+                <tr>
+                    <td>{{ team.name }}</td>
+                    <td>{{ team.league }}</td>
+                    <td>{{ team.WSWin }}</td>
+                    <td>{{ team.rank }}</td>
+                    <td>{{ team.games }}</td>
+                    <td>{{ team.wins }}</td>
+                    <td>{{ team.losses }}</td>
+                    <td>{{ team.projWins }}</td>
+                    <td>{{ team.projLoss }}</td>
+                    <td>{{ team.atBats }}</td>
+                    <td>{{ team.runs }}</td>
+                    <td>{{ team.H }}</td>
+                    <td>{{ team['2B'] }}</td>
+                    <td>{{ team['3B'] }}</td>
+                    <td>{{ team.HR }}</td>
+                    <td>{{ team.TB }}</td>
+                    <td>{{ team.RBI }}</td>
+                    <td>{{ team.BB }}</td>
+                    <td>{{ team.SO }}</td>
+                    <td>{{ team.SB }}</td>
+                    <td>{{ team.CS }}</td>
+                    <td>{{ team.AVG }}</td>
+                    <td>{{ team.OBP }}</td>
+                    <td>{{ team.SLG }}</td>
+                    <td>{{ team.OPS }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button class="back-button" onclick="window.location.href='/'">Back to Home</button>
+    </div>
     </body>
 {% endblock %}

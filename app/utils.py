@@ -41,14 +41,17 @@ def scrape_espn_mlb_news():
 
     return articles
 
+
 def normalize_input(value):
     return " ".join(value.replace("\xa0", " ").split())
+
 
 def normalize_team_name(team_name):
     """
     Normalize a team name by removing extra spaces and non-breaking spaces.
     """
     return " ".join(team_name.replace("\xa0", " ").split())
+
 
 # Connect to the database
 def get_db_connection():
@@ -60,6 +63,7 @@ def get_db_connection():
         charset="utf8mb4",
         cursorclass=pymysql.cursors.DictCursor,
     )
+
 
 # General function to execute SQL queries
 def execute_query(query, params=None, column_name="playerID"):
@@ -75,6 +79,7 @@ def execute_query(query, params=None, column_name="playerID"):
         return set()
     finally:
         connection.close()
+
 
 def get_franchise_id(team_name):
     """
@@ -100,6 +105,7 @@ def get_franchise_id(team_name):
     # Debugging fallback if no match found
     print(f"No franchID found for team: {normalized_team_name}")
     return None
+
 
 # Query players for a team
 def get_players_for_team(team_name):
@@ -128,13 +134,8 @@ WHERE t.franchid = (
     return execute_query(query, (team_name,))
 
 
-
-
-
-
 # Query players for trivia
 def get_players_for_trivia(trivia):
-
     trivia_map = {
         "30+ HR /30+ SB SeasonBatting": """
         SELECT playerID
@@ -161,7 +162,7 @@ def get_players_for_trivia(trivia):
         ) AS career_war_table;
     """,
 
-    "6+ WAR Season": """
+        "6+ WAR Season": """
         SELECT playerID
         FROM (
             SELECT b.playerID, b.yearID,
@@ -443,7 +444,7 @@ JOIN negroleague nl
     FROM pitching
     WHERE p_era <= 3.00;
 """
-,
+        ,
     }
 
     normalized_trivia = normalize_input(trivia)
@@ -452,8 +453,8 @@ JOIN negroleague nl
         print(f"No SQL query mapped for trivia: {normalized_trivia}")
         return set()
 
-
     return execute_query(query)
+
 
 # Determine if input is a team
 def is_team(input_value):
@@ -471,6 +472,7 @@ def is_team(input_value):
     finally:
         connection.close()
 
+
 def get_players_for_team_and_trivia(team_name, trivia):
     """
     Fetch playerIDs where the trivia condition is met while the player was with the specified team.
@@ -483,7 +485,6 @@ def get_players_for_team_and_trivia(team_name, trivia):
         print(f"No team-specific query mapped for trivia: {trivia}")
         return set()
 
-
     params = (team_name,)
     team_specific_results = execute_query(query, params)
 
@@ -492,6 +493,7 @@ def get_players_for_team_and_trivia(team_name, trivia):
 
     print(f"No team-specific match found for trivia: {trivia}. Trying general trivia query.")
     return []
+
 
 # Fetch the playerName from the MySQL database using playerID
 def get_player_name_and_years_from_db(player_id):
@@ -540,6 +542,7 @@ def remove_duplicates_keep_detailed(items):
         if not is_duplicate:
             filtered_items.append(items[i])  # Append the original unnormalized item
     return filtered_items
+
 
 # Scrape the grid
 def scrape_immaculate_grid(puzzle_number=None):
@@ -981,7 +984,7 @@ WHERE nl.startYear <= 1948
     );
 """,
 
-"6+ WAR Season": """
+    "6+ WAR Season": """
     SELECT b.playerID
     FROM batting b
     JOIN teams t ON b.teamID = t.teamID AND b.yearID = t.yearID

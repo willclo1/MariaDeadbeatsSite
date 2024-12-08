@@ -2,17 +2,18 @@
 
 {% block content %}
     <style>
-    body {
-                font-family: 'Arial', sans-serif;
-                background: linear-gradient(135deg, #007bff, #6c757d);
-                color: #f9f9f9;
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                min-height: 100vh;
-                padding: 50px 0 0;
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6c757d);
+            color: #f9f9f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 0 0;
         }
+
         .container {
             background: #fff;
             color: #333;
@@ -109,21 +110,21 @@
         </div>
         <div class="container">
             <table>
-            <thead>
+                <thead>
                 <tr>
                     BANNED USERS
                     <th>Username</th>
                     <th>Email</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {% for BannedUser in BannedUsers %}
                     <tr>
                         <td>{{ BannedUser['username'] }}</td>
                         <td>{{ BannedUser['email'] }}</td>
                     </tr>
                 {% endfor %}
-            </tbody>
+                </tbody>
             </table>
         </div>
     </div>
