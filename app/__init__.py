@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from cfg import Config
+from csi3335f2024 import Config
 from flask_login import LoginManager
 from datetime import timedelta
 

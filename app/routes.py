@@ -12,14 +12,14 @@ from flask import render_template, request, redirect, url_for
 from sqlalchemy import create_engine, false
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
-from cfg import engineStr
-from cfg import sportradar_api_key
+from csi3335f2024 import engineStr
+from csi3335f2024 import sportradar_api_key
 import json
 from app.models import Users, BannedUsers, UserLogs
 from urllib.parse import urlsplit
 import os
 from app.utils import *
-from cfg import basedir
+from csi3335f2024 import basedir
 
 engine = create_engine(engineStr)
 # set a path so templates can be read with any file path
@@ -82,7 +82,12 @@ def team_selection():
     selected_team = None
     if request.method == 'POST':
         selected_team = request.form.get('team')
-        return redirect(url_for('year_selection', team=selected_team))
+        print(selected_team)
+        if(selected_team != ''):
+            return redirect(url_for('year_selection', team=selected_team))
+        else:
+            flash("Please choose a team", 'danger')
+
 
     return render_template('team_selection.html', tmOptions=tmOptions)
 
@@ -197,15 +202,18 @@ def year_selection():
 
     if request.method == 'POST':
         selected_year = request.form.get('year')
-        new_user_log = UserLogs(username=current_user.username,
-                                team_name= selected_team, yearID=selected_year)
-        db.session.add(new_user_log)
-        db.session.commit()
-        print("logged: " + new_user_log.username
-                  + " " + str(new_user_log.yearID) + " "
-                  + new_user_log.team_name + " "
-                  + str(new_user_log.time_of_query))
-        return redirect(url_for('summary', team=selected_team, year=selected_year))
+        if(selected_year != ''):
+            new_user_log = UserLogs(username=current_user.username,
+                                    team_name= selected_team, yearID=selected_year)
+            db.session.add(new_user_log)
+            db.session.commit()
+            print("logged: " + new_user_log.username
+                      + " " + str(new_user_log.yearID) + " "
+                      + new_user_log.team_name + " "
+                      + str(new_user_log.time_of_query))
+            return redirect(url_for('summary', team=selected_team, year=selected_year))
+        else:
+            flash('Please enter a year', 'danger')
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)
 
