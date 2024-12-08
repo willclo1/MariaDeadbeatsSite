@@ -158,8 +158,8 @@
 
 - **Admin Account(Nick)**
   - An account that can be used to control access to the application
-  - Has the ability to ban users, unban users, view a list of banned users,
-  - and create other admin users.
+  - Has the ability to ban users, unban users, view a list of banned users, create other admin users,
+  - and view user logs.
   - Login info:
       - username: `admin`
       - password: `pass`
