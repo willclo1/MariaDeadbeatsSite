@@ -59,6 +59,15 @@ class BanUserForm(FlaskForm):
         if banned_user_test is not None:
             raise ValidationError('This user is already banned!')
 
+class UserLogsAvailable(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Get Logs')
+
+    def validate_username(self, username):
+        unknown_user_test = db.session.scalar(sa.select(Users).where(
+            Users.username == username.data))
+        if unknown_user_test is None:
+            raise ValidationError('Please use a different username.')
 
 class UnbanUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

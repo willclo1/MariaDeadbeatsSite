@@ -5,7 +5,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 import sqlalchemy as sa
 from app import db
 from app import app
-from app.forms import LoginForm, RegistrationForm, BanUserForm, UnbanUserForm
+from app.forms import LoginForm, RegistrationForm, BanUserForm, UnbanUserForm, UserLogsAvailable
 from app.forms import LoginForm, RegistrationForm, BanUserForm
 from flask import flash
 from flask import render_template, request, redirect, url_for
@@ -117,6 +117,20 @@ def admin_status_required():
 
     return admin_status_decorator
 
+@app.route('/view-user-logs', methods=['GET', 'POST'])
+@login_required
+@admin_status_required()
+def view_user_logs():
+    form = UserLogsAvailable()
+
+    user_logs = ''
+
+    if form.validate_on_submit():
+        user_logs = db.session.query(UserLogs).filter(UserLogs.username == form.username.data)
+    for log in user_logs:
+        print(log.username)
+
+    return render_template('view_user_logs.html', title='View User Logs', UserLogsForm=form, UserLogs=user_logs)
 
 @app.route('/ban-user', methods=['GET', 'POST'])
 @login_required

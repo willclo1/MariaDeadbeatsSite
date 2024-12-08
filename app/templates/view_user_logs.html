@@ -2,7 +2,7 @@
 
 {% block content %}
     <style>
-    body {
+         body {
                 font-family: 'Arial', sans-serif;
                 background: linear-gradient(135deg, #007bff, #6c757d);
                 color: #f9f9f9;
@@ -80,47 +80,37 @@
     </style>
     <div style="display: flex; justify-content: space-between; gap: 20px;">
         <div class="container" style="flex: 1;">
-            <h1>Input the username for the user you wish to ban.</h1>
+            <h1>Input the username for the user you wish to receive logs for.</h1>
             <form action="" method="POST">
-                {{ BanForm.hidden_tag() }}
+                {{ UserLogsForm.hidden_tag() }}
                 <div class="form-group">
-                    {{ BanForm.username.label }}
-                    {{ BanForm.username(size=32) }}
-                    {% for error in BanForm.username.errors %}
+                    {{ UserLogsForm.username.label }}
+                    {{ UserLogsForm.username(size=32) }}
+                    {% for error in UserLogsForm.username.errors %}
                         <span class="form-error">[{{ error }}]</span>
                     {% endfor %}
                 </div>
-                <button type="submit" name="ban_submit">{{ BanForm.submit.label.text }}</button>
-            </form>
-        </div>
-        <div class="container" style="flex: 1;">
-            <h1>Input the username for the user you wish to unban.</h1>
-            <form action="" method="POST">
-                {{ UnbanForm.hidden_tag() }}
-                <div class="form-group">
-                    {{ UnbanForm.username.label }}
-                    {{ UnbanForm.username(size=32) }}
-                    {% for error in UnbanForm.username.errors %}
-                        <span class="form-error">[{{ error }}]</span>
-                    {% endfor %}
-                </div>
-                <button type="submit" name="unban_submit">{{ UnbanForm.submit.label.text }}</button>
+                <button type="submit" name="ban_submit">{{ UserLogsForm.submit.label.text }}</button>
             </form>
         </div>
         <div class="container">
             <table>
-            <thead>
+                <thead>
                 <tr>
-                    BANNED USERS
+                    User Logs
                     <th>Username</th>
-                    <th>Email</th>
+                    <th>Time of Query</th>
+                    <th>Team Name</th>
+                    <th>Year</th>
                 </tr>
-            </thead>
+                </thead>
             <tbody>
-                {% for BannedUser in BannedUsers %}
+                {% for UserLog in UserLogs %}
                     <tr>
-                        <td>{{ BannedUser['username'] }}</td>
-                        <td>{{ BannedUser['email'] }}</td>
+                        <td>{{ UserLog['username'] }}</td>
+                        <td>{{ UserLog['time_of_query'] }}</td>
+                        <td>{{ UserLog['team_name'] }}</td>
+                        <td>{{ UserLog['yearID'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
