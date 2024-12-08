@@ -94,6 +94,10 @@
   - A table with `id`, `username`, and `email`.
   - Used to show users banned from the Flask application.
 
+- **UserLogs**:
+  - A table with 'log_id', 'username', 'team_name', 'yearID', and 'time_of_query'
+  - Used to record user-system interactions.
+
 - **Batting**:
   - Added a new column `b_WAR` from a CSV found at [MLB WAR Data Historical](https://github.com/Neil-Paine-1/MLB-WAR-data-historical).
 
