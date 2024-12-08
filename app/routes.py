@@ -15,7 +15,7 @@ from sqlalchemy.sql import text
 from cfg import engineStr
 from cfg import sportradar_api_key
 import json
-from app.models import Users, BannedUsers
+from app.models import Users, BannedUsers, UserLogs
 from urllib.parse import urlsplit
 import os
 from app.utils import *
@@ -183,6 +183,14 @@ def year_selection():
 
     if request.method == 'POST':
         selected_year = request.form.get('year')
+        new_user_log = UserLogs(username=current_user.username,
+                                team_name= selected_team, yearID=selected_year)
+        db.session.add(new_user_log)
+        db.session.commit()
+        print("logged: " + new_user_log.username
+                  + " " + str(new_user_log.yearID) + " "
+                  + new_user_log.team_name + " "
+                  + str(new_user_log.time_of_query))
         return redirect(url_for('summary', team=selected_team, year=selected_year))
 
     return render_template('year_selection.html', yrOptions=yrOptions, selected_team=selected_team)

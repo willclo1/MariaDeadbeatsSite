@@ -40,6 +40,13 @@ class BannedUsers(db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True,
                                              unique=True)
 
+class UserLogs(db.Model):
+    log_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True)
+    team_name: so.Mapped[str] = so.mapped_column(sa.String(50), nullable=False)
+    yearID: so.Mapped[int] = so.mapped_column(sa.SmallInteger, nullable=False)
+    time_of_query: so.Mapped[datetime] = so.mapped_column(
+        default=lambda: datetime.now(timezone.utc), index=True)
 
 @login.user_loader
 def load_admin(user_id):
