@@ -430,7 +430,7 @@ JOIN negroleague nl
         "≤ 3.00 ERA CareerPitching": """
     SELECT playerID
     FROM pitching
-    WHERE career_p_era <= 3.00;
+    WHERE p_era <= 3.00;
 """,
 
         "≤ 3.00 ERA Season": """
