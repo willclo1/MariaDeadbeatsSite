@@ -65,8 +65,8 @@ class UnbanUserForm(FlaskForm):
     submit = SubmitField('unban')
 
     def validate_username(self, username):
-        unknown_user_test = db.session.scalar(sa.select(BannedUsers).where(
-            Users.username == username.data))
+        unknown_user_test = db.session.scalar(sa.select(BannedUsers).join(
+            Users, Users.username == BannedUsers.username).where(Users.username == username.data))
         if unknown_user_test is None:
             raise ValidationError('Please use a different username.')
         not_banned_user_test = db.session.scalar(sa.select(BannedUsers).where(
