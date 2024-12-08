@@ -268,7 +268,7 @@ def get_players_for_trivia(trivia):
         "Dominican Republic": """
             SELECT playerID
             FROM people
-            WHERE birthCountry = 'Dominican Republic';
+            WHERE birthCountry = 'D.R.';
         """,
         "Pitchedmin. 1 game": """
             SELECT DISTINCT playerID
@@ -290,11 +290,6 @@ JOIN negroleague nl
 
 
 
-        """,
-        "Puerto Rico": """
-            SELECT playerID
-            FROM people
-            WHERE birthCountry = 'Puerto Rico';
         """,
         "United States": """
             SELECT playerID
@@ -404,7 +399,6 @@ JOIN negroleague nl
         "Canada": "SELECT playerID FROM people WHERE birthCountry = 'Canada';",
         "Cy Young": "SELECT playerID FROM awards WHERE awardID = 'Cy Young Award';",
         "Designated Hittermin. 1 game": "SELECT playerID FROM appearances WHERE G_dh > 0;",
-        "Dominican Republic": "SELECT playerID FROM people WHERE birthCountry = 'Dominican Republic';",
         "Gold Glove": "SELECT playerID FROM awards WHERE awardID = 'Gold Glove';",
         "Hall of Fame": "SELECT playerID FROM halloffame where inducted = 'Y';",
         "MVP": "SELECT playerID FROM awards WHERE awardID = 'Most Valuable Player';",
@@ -817,7 +811,7 @@ WHERE p.birthCountry != 'USA'
         """,
     "Canada": """
             SELECT playerID
-            FROM players
+            FROM people
             WHERE birthCountry = 'Canada'
               AND teamID IN (
                   SELECT teamID FROM teams WHERE franchid = (
@@ -832,8 +826,8 @@ WHERE p.birthCountry != 'USA'
         """,
     "Dominican Republic": """
             SELECT playerID
-            FROM players
-            WHERE birthCountry = 'Dominican Republic'
+            FROM people
+            WHERE birthCountry = 'D.R.'
               AND teamID IN (
                   SELECT teamID FROM teams WHERE franchid = (
             SELECT franchid
@@ -885,7 +879,7 @@ WHERE nl.startYear <= 1948
         """,
     "Puerto Rico": """
             SELECT playerID
-            FROM players
+            FROM people
             WHERE birthCountry = 'Puerto Rico' or birthCountry = 'P.R.'
               AND teamID IN (
                   SELECT teamID FROM teams WHERE franchid = (
