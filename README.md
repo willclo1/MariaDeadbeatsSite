@@ -4,7 +4,7 @@
 
 1. For an inital set up access the following url and follow the databse setup instructions for your system
 
-https://cs.baylor.edu/~speegle/3335/index.php
+   https://cs.baylor.edu/~speegle/3335/index.php
 
 
 
